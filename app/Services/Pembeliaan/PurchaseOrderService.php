@@ -3,6 +3,7 @@
 namespace App\Services\Pembeliaan;
 use App\Models\DetailPurchaseOrder;
 use App\Models\HeaderPurchaseOrder;
+use App\Services\SerialNumberService;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 

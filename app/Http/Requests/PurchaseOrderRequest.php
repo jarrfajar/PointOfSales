@@ -30,7 +30,7 @@ class PurchaseOrderRequest extends FormRequest
             'supplier_id'          => ['required','integer'],
             'total_harga'          => ['required','numeric','max:9999999999999999.99'],
             'deskripsi'            => ['required','string','max:250'],
-            'barang'               => ['required','array', new UniqueKodeBarangSatuan],
+            'barang'               => ['required','array', new UniqueKodeBarangSatuan('kode_barang','satuan_id')],
             'barang.*.kode_barang' => ['required','string'],
             'barang.*.jumlah'      => ['required','integer'],
             'barang.*.satuan_id'   => ['required','integer'],

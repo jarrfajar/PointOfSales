@@ -57,7 +57,7 @@ Several quick start options are available:
 -   Done
 
 Read the [documentation page](https://getstisla.com/docs) for more information on the framework contents, templates and examples, and more.
-
+****
 ## License
 
 **Stisla** is licensed under the [MIT License](LICENSE)

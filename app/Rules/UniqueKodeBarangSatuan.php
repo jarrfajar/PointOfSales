@@ -11,9 +11,13 @@ class UniqueKodeBarangSatuan implements Rule
      *
      * @return void
      */
-    public function __construct()
+    protected $first_column;
+    protected $second_column;
+
+    public function __construct(string $first_column, string $second_column)
     {
-        //
+        $this->first_column  = $first_column;
+        $this->second_column = $second_column;
     }
 
     /**
@@ -30,7 +34,7 @@ class UniqueKodeBarangSatuan implements Rule
 
         // Loop setiap elemen dalam array "barang" untuk memeriksa kombinasi kode_barang dan satuan_id
         foreach ($value as $barang) {
-            $combination = $barang['kode_barang'] . '_' . $barang['satuan_id'];
+            $combination = $barang[$this->first_column] . '_' . $barang[$this->second_column];
 
             // Jika kombinasi kode_barang dan satuan_id sudah ada sebelumnya, validasi gagal
             if (in_array($combination, $foundCombinations)) {

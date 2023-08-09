@@ -1,5 +1,59 @@
 let unitRow = 1
 
+$(document).ready(function () {
+    drawTable()
+});
+
+
+function drawTable() {
+    $("#table-penerimaan-barang").DataTable({
+        autoWidth: false,
+        paging: true,
+        ajax: {
+            url: "/penerimaan-barang",
+            dataSrc: "data",
+        },
+        columns: [
+            {
+                data: "DT_RowIndex",
+            },
+            {
+                data: "nomor_bapb",
+            },
+            {
+                data: "gudang",
+                render: (data) => data.nama
+            },
+            {
+                data: "supplier",
+                render: (data) => data.nama
+            },
+            {
+                data: "tanggal_terima",
+                render: (data) => moment(data).format('YYYY-MM-DD')
+            },
+            {
+                data: "tanggal_tempo",
+                render: (data) => moment(data).format('YYYY-MM-DD')
+            },
+            {
+                data: "total_harga",
+                render: (data) => parseFloat(data).toLocaleString('id-ID'),
+            },
+            {
+                data: "id",
+                render: function (data) {
+                    return /*html*/ `
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            <button type="submit" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showAddModal(${data})"><i class="fas fa-pencil-alt"></i></button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-action mr-1" data-toggle="tooltip" title="Checkout" onclick="deleteBarang(${data})"><i class="fas fa-trash-alt"></i></button>
+                        </div>`
+                },
+            },
+        ],
+    })
+}
+
 function showModal(id = null) {
     $('.is-invalid').removeClass('is-invalid')
     
@@ -13,13 +67,13 @@ function showModal(id = null) {
     initSelect2('supplier_id','supplier-search')
 
     if (id == null) {
-        $("#modal-title").text("Tambah Purchase Order");
-        $("#btn-form-purchase-order").attr("onclick", `storePurchaseOrder()`);
-        $("#btn-form-purchase-order").text("Simpan");
+        $("#modal-title").text("Tambah BAPB");
+        $("#btn-form-penerimaan-barang").attr("onclick", `store()`);
+        $("#btn-form-penerimaan-barang").text("Simpan");
     } else {
-        $("#modal-title").text("Ubah Purchase Order");
-        $("#btn-form-purchase-order").attr("onclick", `updatePurchaseOrder(${id})`);
-        $("#btn-form-purchase-order").text("Ubah");
+        $("#modal-title").text("Ubah BAPB");
+        $("#btn-form-penerimaan-barang").attr("onclick", `update(${id})`);
+        $("#btn-form-penerimaan-barang").text("Ubah");
         showPurchaseOrder(id);
     }
 }
@@ -29,10 +83,10 @@ function resetForm() {
 }
 
 function getPurchaseOrder(id) {
-    initSelect2Po('nomor_po',`purchase-order/get/${id}`)
+    initSelect2Po('purchase_order_id',`purchase-order/get/${id}`)
 }
 
-$('#nomor_po').on('change', function() {
+$('#purchase_order_id').on('change', function() {
     showPurchaseOrder($(this).val())
 
     unitRow = 1
@@ -174,8 +228,8 @@ function addRow(value = null) {
                 <button type="button" class="btn btn-danger btn-sm btn-action mr-1" onClick="deleteRow(this)"><i class="fas fa-trash-alt"></i></button>
             </td>
             <td>
-                <select class="form-control" id="kode_barang-${unitRow}" data-name="kode_barang"></select>
-                <span id="kode_barang_err" class="invalid-feedback"></span>
+                <select class="form-control" id="barang_id-${unitRow}" data-name="barang_id"></select>
+                <span id="barang_id_err" class="invalid-feedback"></span>
             </td>
             <td>
                 <div>
@@ -207,7 +261,7 @@ function addRow(value = null) {
             </td>
             <td>
                 <label class="custom-switch" style="padding-left: 0">
-                    <input type="checkbox" name="custom-switch-checkbox" id="tax-${unitRow}" class="custom-switch-input" onchange="countTax(this)">
+                    <input type="checkbox" id="tax-${unitRow}" class="custom-switch-input" onchange="countTax(this)" data-name="tax">
                     <input type="hidden" id="tax_hidden-${unitRow}" value="${parseFloat(value?.tax || 0)}" data-name="tax_hidden">
                     <span class="custom-switch-indicator"></span>
                 </label>
@@ -223,7 +277,7 @@ function addRow(value = null) {
     `)
 
     if (value) {
-        select2Selected(`kode_barang-${unitRow}`, {
+        select2Selected(`barang_id-${unitRow}`, {
             id: value.barang.id,
             text: value.barang.nama_barang,
         });
@@ -234,7 +288,7 @@ function addRow(value = null) {
         });
     } else {
         initSelect2(`satuan-${unitRow}`, 'satuan-search')
-        initBarangSelect2(`kode_barang-${unitRow}`)
+        initBarangSelect2(`barang_id-${unitRow}`)
     }
 
     unitRow++;
@@ -248,13 +302,15 @@ function countTotalPrice(element) {
     if (jumlah && harga) {
         let totalHarga = 0
 
-        $(`#total_harga-${elementId}`).val(parseInt(jumlah) * parseFloat(harga))
+        $(`#total_harga-${elementId}`).val(parseFloat(harga) * parseInt(jumlah))
+        $(`#total_harga_hidden-${elementId}`).val(parseFloat(harga) * parseInt(jumlah))
         
         $('#table-barang tbody tr').each(function(key, row) {
             totalHarga += parseFloat($(row).find('[data-name="total_harga"]').val())
         })
         
-        $('#total_harga').val(totalHarga)
+        $('#sub_total').val(totalHarga)
+        countTotal()
     } 
 }
 
@@ -303,11 +359,13 @@ function countTax(element) {
     let ppn         = parseFloat($('#ppn').val())
 
     if ($(element).is(':checked')) {
+        $(element).val(1)
         let tax = (total_harga * 11) / 100
 
         $(`#tax_hidden-${elementId}`).val(tax)
         $('#ppn').val(ppn + tax)
     } else {
+        $(element).val(0)
         let tax_hidden = parseFloat($(`#tax_hidden-${elementId}`).val())
         $('#ppn').val(ppn - tax_hidden)
         $(`#tax_hidden-${elementId}`).val(0)
@@ -336,4 +394,65 @@ function countTotal() {
     let ppn       = parseFloat($('#ppn').val())
 
     $('#total_harga').val(sub_total - diskon - ppn);
+}
+
+function jsonData() {
+    let data = [];
+    $('#table-barang tbody tr').each(function () {
+        let elementId = $(this).find("select").attr("id").split("-")[1];
+        var obj = {
+            barang_id: $(this).find("select").val(),
+            jumlah: $(this).find(`#jumlah-${elementId}`).val(),
+            satuan_id: $(this).find(`#satuan-${elementId}`).val(),
+            harga: $(this).find(`#harga-${elementId}`).val(),
+            diskon_persen: $(this).find(`#diskon_persen-${elementId}`).val(),
+            diskon_rp: $(this).find(`#diskon_rp-${elementId}`).val(),
+            ppn: $(this).find(`#tax-${elementId}`).val(),
+            total_harga: $(this).find(`#total_harga-${elementId}`).val(),
+        }
+
+        data.push(obj)
+    })
+
+    let form = new FormData(document.getElementById("form-penerimaan-barang"))
+    let jsonData = {
+        barang: data,
+    };
+
+    form.forEach((value, key) => (jsonData[key] = value))
+
+    return jsonData
+}
+
+function store() {
+    axios.post('/penerimaan-barang', jsonData())
+    .then((result) => {
+        if (result.status === 200 || result.status === 201) {
+            $('#modal-penerimaan-barang').modal('hide')
+            swal('Berhasil!', 'BAPB berhasil ditambah!', 'success')
+            
+            initializeDatatable()
+        }
+    }).catch((err) => {
+        if (err.response.status === 422) {
+            let error = err.response.data;
+
+            $('.is-invalid').removeClass('is-invalid')
+
+            swal(`${err.response.status}`, `${error.message}`, 'error')
+            
+            for (const key in error.errors) {
+                if (key === 'kategori_id' || key === 'satuan_id' || key === 'gudang_id' || key === 'supplier_id') {
+                    $(`#${key}`).addClass('is-invalid')
+                    $(`#${key}_err`).html(`${error.errors[key][0]}`)
+                } else {
+                    $(`#${key}`).addClass('is-invalid');
+                    $(`#${key}`).next().html(`${error.errors[key][0]}`);
+                }
+            }
+            return
+        }
+
+        swal(`${err.response.status}`, `${err.response.statusText}`, 'error')
+    })
 }

@@ -207,7 +207,7 @@ function deleteRow(element) {
 const initializeDatatable = () => {
     $("#table-purchase-order").DataTable().destroy();
     drawTable();
-};
+}
 
 function drawTable() {
     $("#table-purchase-order").DataTable({
@@ -272,14 +272,13 @@ function drawTable() {
                                 <a class="dropdown-item" href="#" onclick="showModal(${id})">Edit</a>
                                 <a class="dropdown-item" href="#" onclick="deletePurchaseOrder(${id})">Hapus</a>
                             </div>
-                        </div>
-                    `;
+                        </div>`
                     }
                     
                 },
             },
         ],
-    });
+    })
 }
 
 function approved(id) {

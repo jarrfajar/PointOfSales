@@ -36,18 +36,23 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped" id="table-penerimaan-barang">
-                            <thead >
-                                <tr>
-                                    <th style="width: 50px">ID</th>
-                                    <th>Nama</th>
-                                    <th>Alamat</th>
-                                    <th>Kepala penerimaan-barang</th>
-                                    <th style="width: 100px">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="table-penerimaan-barang">
+                                <thead >
+                                    <tr>
+                                        <th style="width: 50px">ID</th>
+                                        <th>Nomor BAPB</th>
+                                        <th style="width: 15%">Gudang</th>
+                                        <th>Supplier</th>
+                                        <th>Terima</th>
+                                        <th>Jatuh Tempo</th>
+                                        <th style="width: 15%">Total harga</th>
+                                        <th style="width: 10%">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="card-footer bg-whitesmoke">
                         This is card footer
@@ -103,10 +108,10 @@
 
                             <div class="col">
                                 <div class="form-group row">
-                                    <label for="nomor_po" class="col-sm-3 col-form-label">Nomor PO</label>
+                                    <label for="purchase_order_id" class="col-sm-3 col-form-label">Nomor PO</label>
                                     <div class="col-sm-9">
-                                        <select class="form-control" id="nomor_po" name="nomor_po" style="width: 100%;"></select>
-                                        <span id="nomor_po_err" class="invalid"  style="color:rgb(220, 53, 69); font-size: 12px"></span>
+                                        <select class="form-control" id="purchase_order_id" name="purchase_order_id" style="width: 100%;"></select>
+                                        <span id="purchase_order_id_err" class="invalid"  style="color:rgb(220, 53, 69); font-size: 12px"></span>
                                     </div>
                                 </div>
                             </div>
@@ -125,10 +130,10 @@
 
                             <div class="col">
                                 <div class="form-group row">
-                                    <label for="tanggal" class="col-sm-3 control-label text-left is-required">Tanggal PO</label>
+                                    <label for="tanggal_po" class="col-sm-3 control-label text-left is-required">Tanggal PO</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="tanggal" name="tanggal" readonly>
-                                        <span id="tanggal_err" class="invalid-feedback"></span>
+                                        <input type="text" class="form-control" id="tanggal_po" name="tanggal_po" readonly>
+                                        <span id="tanggal_po_err" class="invalid-feedback"></span>
                                     </div>
                                 </div>
                             </div>
@@ -137,20 +142,20 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-group row">
-                                    <label for="tanggal" class="col-sm-3 control-label text-left is-required">Tanggal Terima</label>
+                                    <label for="tanggal_terima" class="col-sm-3 control-label text-left is-required">Tanggal Terima</label>
                                     <div class="col-sm-9">
-                                        <input type="date" class="form-control" id="tanggal" name="tanggal">
-                                        <span id="tanggal_err" class="invalid-feedback"></span>
+                                        <input type="date" class="form-control" id="tanggal_terima" name="tanggal_terima">
+                                        <span id="tanggal_terima_err" class="invalid-feedback"></span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col">
                                 <div class="form-group row">
-                                    <label for="tanggal" class="col-sm-3 control-label text-left is-required">Tanggal Jatuh Tempo</label>
+                                    <label for="tanggal_tempo" class="col-sm-3 control-label text-left is-required">Tanggal Jatuh Tempo</label>
                                     <div class="col-sm-9">
-                                        <input type="date" class="form-control" id="tanggal" name="tanggal">
-                                        <span id="tanggal_err" class="invalid-feedback"></span>
+                                        <input type="date" class="form-control" id="tanggal_tempo" name="tanggal_tempo">
+                                        <span id="tanggal_tempo_err" class="invalid-feedback"></span>
                                     </div>
                                 </div>
                             </div>
