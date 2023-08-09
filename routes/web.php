@@ -1,5 +1,15 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\GudangController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PenerimaanBarangController;
+use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\SatuanController;
+use App\Http\Controllers\SupplierController;
+use App\Services\SerialNumberService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,16 +22,84 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/login', [AuthController::class, 'ShowLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::redirect('/', '/dashboard-general-dashboard');
+Route::get('/register', [AuthController::class, 'showRegister']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::redirect('/', '/dashboard');
+    Route::get('/dashboard', function () {
+        return view('pages.dashboard-ecommerce-dashboard', ['type_menu' => 'dashboard']);
+    });
+});
 
 // Dashboard
 Route::get('/dashboard-general-dashboard', function () {
     return view('pages.dashboard-general-dashboard', ['type_menu' => 'dashboard']);
 });
-Route::get('/dashboard-ecommerce-dashboard', function () {
-    return view('pages.dashboard-ecommerce-dashboard', ['type_menu' => 'dashboard']);
+
+Route::get('/test', function () {
+    return SerialNumberService::genereteNumber('FJR', 'PO');
 });
+
+Route::get('/cabang', [BranchController::class, 'index'])->name('cabang');
+Route::get('/cabang/{id}', [BranchController::class, 'show']);
+Route::post('/cabang', [BranchController::class, 'store']);
+Route::put('/cabang/{id}', [BranchController::class, 'update']);
+Route::delete('/cabang/{id}', [BranchController::class, 'destroy']);
+
+Route::get('/gudang', [GudangController::class, 'index'])->name('gudang');
+Route::get('/gudang/{id}', [GudangController::class, 'show']);
+Route::post('/gudang', [GudangController::class, 'store']);
+Route::put('/gudang/{id}', [GudangController::class, 'update']);
+Route::delete('/gudang/{id}', [GudangController::class, 'destroy']);
+Route::get('/gudang-search', [GudangController::class, 'search']);
+
+Route::get('/satuan', [SatuanController::class, 'index'])->name('satuan');
+Route::get('/satuan/{id}', [SatuanController::class, 'show']);
+Route::post('/satuan', [SatuanController::class, 'store']);
+Route::put('/satuan/{id}', [SatuanController::class, 'update']);
+Route::delete('/satuan/{id}', [SatuanController::class, 'destroy']);
+Route::get('/satuan-search', [SatuanController::class, 'search']);
+
+Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
+Route::get('/kategori/{id}', [KategoriController::class, 'show']);
+Route::post('/kategori', [KategoriController::class, 'store']);
+Route::put('/kategori/{id}', [KategoriController::class, 'update']);
+Route::delete('/kategori/{id}', [KategoriController::class, 'destroy']);
+Route::get('/kategori-search', [KategoriController::class, 'search']);
+
+Route::get('/barang', [BarangController::class, 'index'])->name('barang');
+Route::get('/barang/{id}', [BarangController::class, 'show']);
+Route::post('/barang', [BarangController::class, 'store']);
+Route::put('/barang/{id}', [BarangController::class, 'update']);
+Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
+Route::get('/barang-search', [BarangController::class, 'search']);
+
+Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier');
+Route::get('/supplier/{id}', [SupplierController::class, 'show']);
+Route::post('/supplier', [SupplierController::class, 'store']);
+Route::put('/supplier/{id}', [SupplierController::class, 'update']);
+Route::delete('/supplier/{id}', [SupplierController::class, 'destroy']);
+Route::get('/supplier-search', [SupplierController::class, 'search']);
+
+Route::get('/purchase-order', [PurchaseOrderController::class, 'index'])->name('purchase_order');
+Route::get('/purchase-order/{id}', [PurchaseOrderController::class, 'show']);
+Route::get('/purchase-order/get/{id}', [PurchaseOrderController::class, 'get']);
+Route::post('/purchase-order', [PurchaseOrderController::class, 'store']);
+Route::put('/purchase-order/{id}', [PurchaseOrderController::class, 'update']);
+Route::delete('/purchase-order/{id}', [PurchaseOrderController::class, 'destroy']);
+Route::put('/purchase-order/approve/{id}', [PurchaseOrderController::class, 'approve']);
+Route::put('/purchase-order/reject/{id}', [PurchaseOrderController::class, 'reject']);
+
+Route::get('/penerimaan-barang', [PenerimaanBarangController::class, 'index'])->name('bapb');
+Route::get('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'show']);
+Route::post('/penerimaan-barang', [PenerimaanBarangController::class, 'store']);
+Route::put('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'update']);
+Route::delete('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'destroy']);
 
 
 // Layout

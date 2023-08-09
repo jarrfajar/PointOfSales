@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
     ];
@@ -41,4 +41,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function cabang()
+    {
+        return $this->belongsToMany(Branch::class, 'cabang_user', 'user_id', 'kode_cabang', 'id', 'kode_cabang');
+    }
+
+    public function branch()
+    {
+        return $this->hasOne(Branch::class, 'kode_cabang', 'kode_cabang');
+    }
 }

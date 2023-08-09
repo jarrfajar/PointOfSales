@@ -3,28 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"
-        name="viewport">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <title>Login &mdash; Stisla</title>
 
     <!-- General CSS Files -->
     <link rel="stylesheet"
         href="{{ asset('library/bootstrap/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-        integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
+    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- CSS Libraries -->
-    <link rel="stylesheet"
-        href="{{ asset('library/bootstrap-social/bootstrap-social.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/bootstrap-social/bootstrap-social.css') }}">
 
     <!-- Template CSS -->
-    <link rel="stylesheet"
-        href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('css/components.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components.css') }}">
 </head>
 
 <body>
@@ -41,77 +33,33 @@
                         </h4>
                         <p class="text-muted">Before you get started, you must login or register if you don't already
                             have an account.</p>
-                        <form method="POST"
-                            action="#"
-                            class="needs-validation"
-                            novalidate="">
+                        <form>
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input id="email"
-                                    type="email"
-                                    class="form-control"
-                                    name="email"
-                                    tabindex="1"
-                                    required
-                                    autofocus>
-                                <div class="invalid-feedback">
-                                    Please fill in your email
-                                </div>
+                                <label for="username">username</label>
+                                <input id="username" type="text" class="form-control" name="username" tabindex="1" autofocus>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cabang">cabang</label>
+                                <input id="cabang" type="text" class="form-control" name="cabang" tabindex="1" autofocus>
                             </div>
 
                             <div class="form-group">
                                 <div class="d-block">
-                                    <label for="password"
-                                        class="control-label">Password</label>
+                                    <label for="password" class="control-label was-validated">Password</label>
                                 </div>
-                                <input id="password"
-                                    type="password"
-                                    class="form-control"
-                                    name="password"
-                                    tabindex="2"
-                                    required>
-                                <div class="invalid-feedback">
-                                    please fill in your password
-                                </div>
+                                <input id="password" type="password" class="form-control" name="password" tabindex="2">
                             </div>
 
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox"
-                                        name="remember"
-                                        class="custom-control-input"
-                                        tabindex="3"
-                                        id="remember-me">
-                                    <label class="custom-control-label"
-                                        for="remember-me">Remember Me</label>
-                                </div>
-                            </div>
-
-                            <div class="form-group text-right">
-                                <a href="auth-forgot-password.html"
-                                    class="float-left mt-3">
-                                    Forgot Password?
-                                </a>
-                                <button type="submit"
-                                    class="btn btn-primary btn-lg btn-icon icon-right"
+                            <div class="form-group text-center">
+                                <button type="button"
+                                    class="btn btn-primary btn-lg"
+                                    id="button-login"
                                     tabindex="4">
                                     Login
                                 </button>
                             </div>
-
-                            <div class="mt-5 text-center">
-                                Don't have an account? <a href="auth-register.html">Create new one</a>
-                            </div>
                         </form>
-
-                        <div class="text-small mt-5 text-center">
-                            Copyright &copy; Your Company. Made with 💙 by Stisla
-                            <div class="mt-2">
-                                <a href="#">Privacy Policy</a>
-                                <div class="bullet"></div>
-                                <a href="#">Terms of Service</a>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="col-lg-8 col-12 order-lg-2 min-vh-100 background-walk-y position-relative overlay-gradient-bottom order-1"
@@ -143,6 +91,8 @@
     <script src="{{ asset('library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('library/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('js/stisla.js') }}"></script>
+    <script src="{{ asset('library/sweetalert/dist/sweetalert.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <!-- JS Libraies -->
 
@@ -150,7 +100,8 @@
 
     <!-- Template JS File -->
     <script src="{{ asset('js/scripts.js') }}"></script>
-    <script src="{{ asset('js/custom.js') }}"></script>
+    <!-- Page Specific JS File -->
+    <script src="{{ asset('js/page/auth-login.js') }}"></script>
 </body>
 
 </html>
