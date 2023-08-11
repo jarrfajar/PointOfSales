@@ -36,7 +36,7 @@ class BarangService
 
     public static function show(int $id)
     {
-        $barang = Barang::with('kategori','satuan')->find($id);
+        $barang = Barang::with('kategori','satuan','gudang')->find($id);
 
         return response()->json(['data' => $barang]);
     }

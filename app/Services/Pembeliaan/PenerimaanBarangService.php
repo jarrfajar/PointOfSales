@@ -16,7 +16,7 @@ class PenerimaanBarangService
                                                ->where('kode_cabang', auth()->user()->kode_cabang)
                                                ->orderBy('id', 'desc');
 
-        if (request()->ajax()) {
+        if (request()->wantsJson()) {
             return DataTables::of($penerimaan_barang)->addIndexColumn()->make(true);
         }
 

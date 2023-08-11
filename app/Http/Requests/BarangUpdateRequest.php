@@ -25,13 +25,13 @@ class BarangUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        // $barang = Barang::find(request()->id);
+
+        $barang = Barang::find(request()->id);
         return [
-            'kode_barang'        => ['required','string','min:3','max:250', Rule::unique('barang', 'kode_barang')->ignore(request()->id)],
-            'gudang_id'          => ['required','string','min:3','max:250'],
+            'kode_barang'        => ['required','string','min:3','max:250', Rule::unique('barang')->where(fn ($query) => $query->where('gudang_id', request()->gudang_id))->ignore(request()->route('id'))],
             'nama_barang'        => ['required','string','min:3','max:250'],
+            'gudang_id'          => ['required','integer'],
             'kategori_id'        => ['required','integer'],
-            'jumlah'             => ['required','integer'],
             'satuan_id'          => ['required','integer'],
             'tanggal_kadaluarsa' => ['required','date'],
             'harga_beli'         => ['required','numeric','max:9999999999999999.99'],

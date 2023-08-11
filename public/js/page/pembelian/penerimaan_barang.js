@@ -1,18 +1,26 @@
 let unitRow = 1
 
 $(document).ready(function () {
-    drawTable()
+    getIndex()
 });
 
+function getIndex() {
+    Service.showLoading()
+    
+    axios.get('/penerimaan-barang')
+    .then((result) => {
+        const response = result.data.data
+        drawTable(response)
+    }).catch((err) => handelErrorFetch(err))
+    .finally(() => Service.hideLoading())
+}
 
-function drawTable() {
+
+function drawTable(data) {
     $("#table-penerimaan-barang").DataTable({
         autoWidth: false,
         paging: true,
-        ajax: {
-            url: "/penerimaan-barang",
-            dataSrc: "data",
-        },
+        data: data,
         columns: [
             {
                 data: "DT_RowIndex",
@@ -62,9 +70,19 @@ function showModal(id = null) {
         keyboard: false,
     })
 
-    resetForm()
+    formReset()
 
-    initSelect2('supplier_id','supplier-search')
+    Service.initSelect2({
+        id: 'supplier_id',
+        uri: 'supplier-search',
+        item: function (item) {
+            return {
+                id: item.id,
+                text: item.nama
+            }
+        }
+    })
+    
 
     if (id == null) {
         $("#modal-title").text("Tambah BAPB");
@@ -78,12 +96,19 @@ function showModal(id = null) {
     }
 }
 
-function resetForm() {
-    // 
-}
+const formReset = () => Service.resetForm('form-penerimaan-barang')
 
 function getPurchaseOrder(id) {
-    initSelect2Po('purchase_order_id',`purchase-order/get/${id}`)
+    Service.initSelect2({
+        id: 'purchase_order_id',
+        uri: `purchase-order/get/${id}`,
+        item: function (item) {
+            return {
+                id: item.id,
+                text: `${item.nomor_purchase_order} | ${moment(item.tanggal).format('YYYY-MM-DD')}`
+            }
+        }
+    })
 }
 
 $('#purchase_order_id').on('change', function() {
@@ -94,13 +119,17 @@ $('#purchase_order_id').on('change', function() {
 })
 
 function showPurchaseOrder(id) {
+    Service.showLoading();
     axios.get(`/purchase-order/${id}`)
     .then((result) => {
         const response = result.data.data
         
-        select2Selected("gudang_id", {
-            id: response.gudang.id,
-            text: response.gudang.nama,
+        Service.select2Selected({
+            id: 'gudang_id',
+            dataOption: {
+                id: response.gudang.id,
+                text: response.gudang.nama,
+            }
         })
 
         $('#tanggal').val(moment(response.tanggal).format('YYYY-MM-DD'))
@@ -113,106 +142,9 @@ function showPurchaseOrder(id) {
         
         response.purchase_orders.forEach((value) => addRow(value))
 
-    }).catch((err) => {
-        swal(`${err.response.status}`, `${err.response.statusText}`, 'error')
-    })
+    }).catch((err) => Service.handelErrorFetch(err))
+    .finally(() => Service.hideLoading())
 }
-
-function initBarangSelect2(id) {
-    let gudang = $('#gudang_id').val()
-
-    $(`#${id}`).select2({
-        placeholder: "--Pilih--",
-        allowClear: true,
-        ajax: {
-            url: '/barang-search',
-            dataType: "json",
-            delay: 750,
-            data: function (params) {
-                return {
-                    search: params.term,
-                    gudang: gudang,
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.data.map(function (item) {
-                        return {
-                            id: item.id,
-                            text: item.nama_barang
-                        }
-                    }),
-                };
-            },
-            cache: true,
-        },
-    })
-}
-
-function initSelect2(id, uri) {
-    $(`#${id}`).select2({
-        placeholder: "--Pilih--",
-        allowClear: true,
-        ajax: {
-            url: `/${uri}`,
-            dataType: "json",
-            delay: 750,
-            data: function (params) {
-                return {
-                    search: params.term,
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.data.map(function (item) {
-                        return {
-                            id: item.id,
-                            text: item.nama
-                        }
-                    }),
-                };
-            },
-            cache: true,
-        },
-    })
-}
-
-function initSelect2Po(id, uri) {
-    $(`#${id}`).select2({
-        placeholder: "--Pilih--",
-        allowClear: true,
-        ajax: {
-            url: `/${uri}`,
-            dataType: "json",
-            delay: 750,
-            data: function (params) {
-                return {
-                    search: params.term,
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.data.map(function (item) {
-                        return {
-                            id: item.id,
-                            text: `${item.nomor_purchase_order} | ${moment(item.tanggal).format('YYYY-MM-DD')}`
-                        }
-                    }),
-                }
-            },
-            cache: true,
-        },
-    })
-}
-
-function select2Selected(id, data) {
-    let select2Element = $(`#${id}`);
-    let option = data;
-
-    var newOption = new Option(option.text, option.id);
-    select2Element.empty().append(newOption).trigger("change");
-}
-
 
 function addRow(value = null) {
     let gudang = $('#gudang_id').val()
@@ -277,18 +209,50 @@ function addRow(value = null) {
     `)
 
     if (value) {
-        select2Selected(`barang_id-${unitRow}`, {
-            id: value.barang.id,
-            text: value.barang.nama_barang,
-        });
-
-        select2Selected(`satuan-${unitRow}`, {
-            id: value.satuan.id,
-            text: value.satuan.nama,
-        });
+        Service.select2Selected({
+            id: `barang_id-${unitRow}`,
+            dataOption: {
+                id: value.barang.id,
+                text: value.barang.nama_barang,
+            }
+        })
+        
+        Service.select2Selected({
+            id: `satuan-${unitRow}`,
+            dataOption: {
+                id: value.satuan.id,
+                text: value.satuan.nama,
+            }
+        })
     } else {
-        initSelect2(`satuan-${unitRow}`, 'satuan-search')
-        initBarangSelect2(`barang_id-${unitRow}`)
+        Service.initSelect2({
+            id:`satuan-${unitRow}`,
+            uri: 'satuan-search',
+            item: function (item) {
+                return {
+                    id: item.id,
+                    text: item.nama
+                }
+            }
+        })
+
+        let gudang = $('#gudang_id').val()
+        Service.initSelect2({
+            id:`barang_id-${unitRow}`,
+            uri: 'barang-search',
+            params: function (data) {
+                return {
+                    search: data.term,
+                    gudang: gudang,
+                }
+            },
+            item: function (item) {
+                return {
+                    id: item.id,
+                    text: item.nama_barang
+                }
+            },
+        })
     }
 
     unitRow++;
@@ -425,6 +389,10 @@ function jsonData() {
 }
 
 function store() {
+    Service.showLoading()
+    $('.is-invalid').removeClass('is-invalid')
+    $('.invalid').html('')
+
     axios.post('/penerimaan-barang', jsonData())
     .then((result) => {
         if (result.status === 200 || result.status === 201) {
@@ -433,26 +401,6 @@ function store() {
             
             initializeDatatable()
         }
-    }).catch((err) => {
-        if (err.response.status === 422) {
-            let error = err.response.data;
-
-            $('.is-invalid').removeClass('is-invalid')
-
-            swal(`${err.response.status}`, `${error.message}`, 'error')
-            
-            for (const key in error.errors) {
-                if (key === 'kategori_id' || key === 'satuan_id' || key === 'gudang_id' || key === 'supplier_id') {
-                    $(`#${key}`).addClass('is-invalid')
-                    $(`#${key}_err`).html(`${error.errors[key][0]}`)
-                } else {
-                    $(`#${key}`).addClass('is-invalid');
-                    $(`#${key}`).next().html(`${error.errors[key][0]}`);
-                }
-            }
-            return
-        }
-
-        swal(`${err.response.status}`, `${err.response.statusText}`, 'error')
-    })
+    }).catch((err) => Service.handelErrorFetch(err, ['purchase_order_id','kategori_id','satuan_id','gudang_id','supplier_id']))
+    .finally(() => Service.hideLoading())
 }

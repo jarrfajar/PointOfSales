@@ -99,6 +99,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     
     <!-- Page Specific JS File -->
+    <script src="{{ asset('js/service/service.js') }}"></script>
     <script src="{{ asset('js/page/kamar.js') }}"></script>
     
 @endpush

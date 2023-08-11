@@ -18,11 +18,33 @@
 
     @stack('style')
 
+    <style>
+        .loading-overlay {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.452);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        .loading-overlay img {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+    </style>
+
     <!-- Template CSS -->
-    <link rel="stylesheet"
-        href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('css/components.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/components.css') }}">
 
     <!-- Start GA -->
     <script async
@@ -52,6 +74,9 @@
 
             <!-- Content -->
             @yield('main')
+            <div id="loading" class="loading-overlay">
+                <img src="{{ asset('utils/loading.gif') }}" class="loading-gif" alt="Loading..." />
+            </div>
 
             <!-- Footer -->
             @include('components.footer')

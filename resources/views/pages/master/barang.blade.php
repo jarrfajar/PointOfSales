@@ -169,7 +169,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="btn-form-barang">Save</button>
-                        <button type="button" class="btn btn-warning" onclick="resetForm()">Reset</button>
+                        <button type="button" class="btn btn-warning" onclick="formReset()">Reset</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" id="dismis-modal">Close</button>
                     </div>
                 </form>
@@ -188,6 +188,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     
     <!-- Page Specific JS File -->
+    <script src="{{ asset('js/service/service.js') }}"></script>
     <script src="{{ asset('js/page/master/barang.js') }}"></script>
     
 @endpush

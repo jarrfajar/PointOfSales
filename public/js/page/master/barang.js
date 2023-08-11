@@ -58,18 +58,48 @@ function drawTable() {
     });
 }
 
+const formReset = () => Service.resetForm('form-barang')
+
 function showAddModal(id = null) {
-    $("#form-barang").trigger("reset")
-    $('.is-invalid').removeClass('is-invalid')
+    formReset()
 
     $("#modal-barang").modal({
         backdrop: "static",
         keyboard: false,
-    });
+    })
 
-    initSelect2('gudang_id', 'gudang-search')
-    initSelect2('kategori_id', 'kategori-search')
-    initSelect2('satuan_id', 'satuan-search')
+    Service.initSelect2({
+        id: 'gudang_id',
+        uri: 'gudang-search',
+        item: function (item) {
+            return {
+                id: item.id,
+                text: item.nama
+            }
+        }
+    })
+
+    Service.initSelect2({
+        id: 'satuan_id',
+        uri: 'satuan-search',
+        item: function (item) {
+            return {
+                id: item.id,
+                text: item.nama
+            }
+        }
+    })
+
+    Service.initSelect2({
+        id: 'kategori_id',
+        uri: 'kategori-search',
+        item: function (item) {
+            return {
+                id: item.id,
+                text: item.nama
+            }
+        }
+    })
 
     if (id == null) {
         $("#modal-title").text("Tambah Barang");
@@ -81,34 +111,6 @@ function showAddModal(id = null) {
         $("#btn-form-barang").text("Ubah");
         showBarang(id);
     }
-}
-
-function initSelect2(id, uri) {
-    $(`#${id}`).select2({
-        placeholder: "--Pilih--",
-        allowClear: true,
-        ajax: {
-            url: `/${uri}`,
-            dataType: "json",
-            delay: 750,
-            data: function (params) {
-                return {
-                    search: params.term,
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data.data.map(function (item) {
-                        return {
-                            id: item.id,
-                            text: item.nama
-                        };
-                    }),
-                };
-            },
-            cache: true,
-        },
-    });
 }
 
 const initializeDatatable = () => {
@@ -162,20 +164,8 @@ function storeBarang() {
     });
 }
 
-function selectedSelect2(data, id) {
-    var select2Element = $(`#${id}`);
-    var optionData = {
-        id: data.id,
-        text: data.nama
-    }
-
-    var newOption = new Option(optionData.text, optionData.id);
-    select2Element.empty().append(newOption).trigger('change');
-}
-
 function showBarang(id) {
-    $("#form-barang").trigger("reset")
-    $('.is-invalid').removeClass('is-invalid')
+    formReset()
 
     $("#modal-show-barang").modal({
         backdrop: "static",
@@ -188,11 +178,33 @@ function showBarang(id) {
         
         $.each(response, function(key, value) {
             if (key === 'kategori') {
-                selectedSelect2(value, 'kategori_id')
+                Service.select2Selected({
+                    id: 'kategori_id',
+                    dataOption: {
+                        id: value.id,
+                        text: value.nama
+                    }
+                })
             }
 
             if (key === 'satuan') {
-                selectedSelect2(value, 'satuan_id')
+                Service.select2Selected({
+                    id: 'satuan_id',
+                    dataOption: {
+                        id: value.id,
+                        text: value.nama
+                    }
+                })
+            }
+
+            if (key === 'gudang') {
+                Service.select2Selected({
+                    id: 'gudang_id',
+                    dataOption: {
+                        id: value.id,
+                        text: value.nama
+                    }
+                })
             }
 
             $(`#${key}`).val(value)
@@ -201,6 +213,7 @@ function showBarang(id) {
     })
     .catch((err) => {
         swal(`${err.response.status}`, `${err.response.statusText}`, "error");
+        Service.handelErrorFetch(err)
     });
 }
 
@@ -216,26 +229,7 @@ function updateBarang(id) {
             initializeDatatable()
         }
     }).catch((err) => {
-        if (err.response.status === 422) {
-            let error = err.response.data;
-
-            $('.is-invalid').removeClass('is-invalid')
-
-            swal(`${err.response.status}`, `${error.message}`, 'error')
-            
-            for (const key in error.errors) {
-                if (key === 'kategori_id' || key === 'satuan_id' || key === 'gudang_id') {
-                    $(`#${key}`).addClass('is-invalid')
-                    $(`#${key}_err`).html(`${error.errors[key][0]}`)
-                } else {
-                    $(`#${key}`).addClass('is-invalid');
-                    $(`#${key}`).next().html(`${error.errors[key][0]}`);
-                }
-            }
-            return
-        }
-
-        swal(`${err.response.status}`, `${err.response.statusText}`, 'error')
+        Service.handelErrorFetch(err, ['kategori_id','satuan_id','gudang_id'])
     });
 }
 
