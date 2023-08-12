@@ -22,10 +22,35 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item dropdown {{ $type_menu === 'layout' ? 'active' : '' }}">
-                <a href="#"
-                    class="nav-link has-dropdown"
-                    data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Pembelian</span></a>
+            
+            {{-- Master --}}
+            <li class="nav-item dropdown {{ $type_menu === 'master' ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Master</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('cabang') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('cabang') }}">Cabang</a>
+                    </li>
+                    <li class="{{ Request::is('gudang') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('gudang') }}">Gudang</a>
+                    </li>
+                    <li class="{{ Request::is('satuan') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('satuan') }}">Satuan</a>
+                    </li>
+                    <li class="{{ Request::is('kategori') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('kategori') }}">Kategori</a>
+                    </li>
+                    <li class="{{ Request::is('supplier') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('supplier') }}">Supplier</a>
+                    </li>
+                    <li class="{{ Request::is('barang') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('barang') }}">Barang</a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- Pembelian --}}
+            <li class="nav-item dropdown {{ $type_menu === 'pembelian' ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Pembelian</span></a>
                 <ul class="dropdown-menu">
                     <li class="{{ Request::is('purchase-order') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('purchase-order') }}">Purchase order</a>
@@ -33,9 +58,8 @@
                     <li class="{{ Request::is('penerimaan-barang') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('penerimaan-barang') }}">BAPB</a>
                     </li>
-                    <li class="{{ Request::is('layout-top-navigation') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('layout-top-navigation') }}">Top Navigation</a>
+                    <li class="{{ Request::is('return-bapb') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('return-bapb') }}">Return BAPB</a>
                     </li>
                 </ul>
             </li>

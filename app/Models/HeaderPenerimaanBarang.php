@@ -43,4 +43,14 @@ class HeaderPenerimaanBarang extends Model
     {
         return $this->hasOne(Gudang::class, 'id', 'gudang_id');
     }
+
+    /**
+     * Get the purchaseOrder associated with the HeaderPenerimaanBarang
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function purchaseOrder(): HasOne
+    {
+        return $this->hasOne(HeaderPurchaseOrder::class, 'id', 'purchase_order_id');
+    }
 }

@@ -14,7 +14,7 @@ class GudangService
             return DataTables::of($gudang)->addIndexColumn()->make(true);
         }
 
-        return view('pages.master.gudang',['type_menu' => 'layout']);
+        return view('pages.master.gudang',['type_menu' => 'master']);
     }
 
     public static function store(object $request)

@@ -43,30 +43,42 @@ class Service {
         select2Element.empty().append(newOption).trigger('change');
     }
 
-    static handelErrorFetch(err, idSelect2 = null) {
+    /**
+     * id inputan harus sama dengan field table
+     * select memakai attr data-select dan harus sama dengan field table
+     * @param {*} err 
+     * @param {string} idTable 
+     * @returns 
+     */
+    static handelErrorFetch(err, idTable = null) {
         if (err.response.status === 422) {
             let error = err.response.data;
 
             $('.is-invalid').removeClass('is-invalid')
+            $('.invalid-feedback').html('')
 
             swal(`${err.response.status}`, `${error.message}`, 'error')
-            
+
             for (const key in error.errors) {
-                if (idSelect2 != null) {
-                    if (idSelect2.includes(key)) {
-                        idSelect2.forEach(element => {
-                            if (key === element) {
-                                $(`#${key}`).addClass('is-invalid')
-                                $(`#${key}_err`).html(`${error.errors[key][0]}`)
-                            }
-                        })
-                    } else {
-                        $(`#${key}`).addClass('is-invalid');
-                        $(`#${key}`).next().html(`${error.errors[key][0]}`)
-                    }
-                } else {
+                $('#form-penerimaan-barang').find('.select').not('table .select').each(function() {
                     $(`#${key}`).addClass('is-invalid');
-                    $(`#${key}`).next().html(`${error.errors[key][0]}`)
+                    $(`#${key}`).parent().find('.invalid-feedback').html(`${error.errors[key][0]}`)
+                })
+
+                // tampilkan error message di table form
+                if (idTable !== null) {
+                    $(`#${idTable} tbody tr`).each(function(element) {
+                        if (key.includes(element)) {
+                            let keyName = key.split(`${element}.`)[1];
+
+                            let idElement = $(this).find(`[data-select="${keyName}"]`)
+                            idElement.addClass("is-invalid")
+                            idElement.parent().find('.invalid-feedback').html(`${error.errors[key][0]}`)
+                            
+                            $(this).find(`[data-name="${keyName}"]`).addClass("is-invalid");
+                            $(this).find(`[data-name="${keyName}"]`).next().html(`${error.errors[key][0]}`);
+                        }
+                    })
                 }
             }
             return
@@ -89,6 +101,7 @@ class Service {
         $(`#${formId}`).trigger("reset")
         $('.is-invalid').removeClass('is-invalid')
         $('.invalid').html('')
+        $('textarea').val('')
         
         if (emptySelect2) {
             $('select').empty()

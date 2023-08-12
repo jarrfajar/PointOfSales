@@ -14,7 +14,7 @@ class SatuanService
             return DataTables::of($satuan)->addIndexColumn()->make(true);
         }
 
-        return view('pages.master.satuan',['type_menu' => 'layout']);
+        return view('pages.master.satuan',['type_menu' => 'master']);
     }
 
     public static function store(object $request)

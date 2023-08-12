@@ -24,3 +24,5 @@ di po tambahkan status selesai jika sudah BAPB
     - semua stock barang
     - barang masuk
     - barang keluar
+
+setalah melakukan BAPB, stok barang bertambah/berkurang

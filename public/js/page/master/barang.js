@@ -229,7 +229,7 @@ function updateBarang(id) {
             initializeDatatable()
         }
     }).catch((err) => {
-        Service.handelErrorFetch(err, ['kategori_id','satuan_id','gudang_id'])
+        Service.handelErrorFetch(err)
     });
 }
 

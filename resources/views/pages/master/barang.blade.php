@@ -68,114 +68,27 @@
         </section>
     </div>
 
-    <div id="modal-barang" data-focus="false" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modal-title">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form id="form-barang">
-                    <div class="modal-body"> 
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="gudang_id" class="col-sm-3 col-form-label">Gudang</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control" id="gudang_id" name="gudang_id" style="width: 100%;" onchange="removeErrorClass(this)"></select>
-                                        <span id="gudang_id_err" class="invalid"  style="color:rgb(220, 53, 69); font-size: 12px"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="kode_barang" class="col-sm-3 control-label text-left is-required">Kode Barang</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="kode_barang" name="kode_barang">
-                                        <span id="kode_barang_err" class="invalid-feedback"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="nama_barang" class="col-sm-3 control-label text-left is-required">Nama Barang</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="nama_barang" name="nama_barang">
-                                        <span id="nama_barang_err" class="invalid-feedback"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="tanggal_kadaluarsa" class="col-sm-3 control-label text-left is-required">Tanggal Kadaluarsa</label>
-                                    <div class="col-sm-9">
-                                        <input type="date" class="form-control" id="tanggal_kadaluarsa" name="tanggal_kadaluarsa">
-                                        <span id="tanggal_kadaluarsa_err" class="invalid-feedback"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="kategori_id" class="col-sm-3 col-form-label">Kategori</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control" id="kategori_id" name="kategori_id" style="width: 100%;" onchange="removeErrorClass(this)"></select>
-                                        <span id="kategori_id_err" class="invalid"  style="color:rgb(220, 53, 69); font-size: 12px"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="satuan_id" class="col-sm-3 col-form-label">Satuan</label>
-                                    <div class="col-sm-9">
-                                        <select class="form-control" id="satuan_id" name="satuan_id" style="width: 100%;" onchange="removeErrorClass(this)"></select>
-                                        <span id="satuan_id_err" class="invalid"  style="color:rgb(220, 53, 69); font-size: 12px"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="harga_beli" class="col-sm-3 control-label text-left is-required">Harga Beli</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="harga_beli" name="harga_beli">
-                                        <span id="harga_beli_err" class="invalid-feedback"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col">
-                                <div class="form-group row">
-                                    <label for="harga_jual" class="col-sm-3 control-label text-left is-required">Harga Jual</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control" id="harga_jual" name="harga_jual">
-                                        <span id="harga_jual_err" class="invalid-feedback"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="btn-form-barang">Save</button>
-                        <button type="button" class="btn btn-warning" onclick="formReset()">Reset</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="dismis-modal">Close</button>
-                    </div>
-                </form>
-            </div>
+    <x-modal name="barang">
+        <div class="row">
+            <x-input-select-col name="gudang_id" label="Gudang" onchange="removeErrorClass(this)"></x-input-select-col>
+            <x-input-col type="text" name="kode_barang" label="Kode Barang"></x-input-col>
         </div>
-    </div>
+
+        <div class="row">
+            <x-input-col type="text" name="nama_barang" label="Nama Barang" onchange="removeErrorClass(this)"></x-input-col>
+            <x-input-col type="date" name="tanggal_kadaluarsa" label="Tanggal Kadaluarsa"></x-input-col>
+        </div>
+
+        <div class="row">
+            <x-input-select-col name="kategori_id" label="Kategori" onchange="removeErrorClass(this)"></x-input-select-col>
+            <x-input-select-col name="satuan_id" label="Satuan" onchange="removeErrorClass(this)"></x-input-select-col>
+        </div>
+
+        <div class="row">
+            <x-input-col type="text" name="harga_beli" label="Harga Beli"></x-input-col>
+            <x-input-col type="text" name="harga_jual" label="Harga Jual"></x-input-col>
+        </div>
+    </x-modal>
 @endsection
 
 @push('scripts')

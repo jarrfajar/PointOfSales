@@ -245,15 +245,19 @@ function drawTable() {
             },
             {
                 data: "status",
-                render: function (data) {
-                    if (data === 1) {
-                        return /*html*/`<span class="badge badge-success">Approved</span>`
-                    }
-
-                    if (data === 2) {
-                        return /*html*/`<span class="badge badge-danger">Rejected</span>`
+                render: function(status, type, data) {
+                    if (data.bapb === 1) {
+                        return /*html*/`<span class="badge badge-primary">selesai</span>`
                     } else {
-                        return /*html*/`<span class="badge badge-warning">Waiting</span>`
+                        if (status === 1) {
+                            return /*html*/`<span class="badge badge-success">Approved</span>`
+                        }
+    
+                        if (status === 2) {
+                            return /*html*/`<span class="badge badge-danger">Rejected</span>`
+                        } else {
+                            return /*html*/`<span class="badge badge-warning">Waiting</span>`
+                        }
                     }
                 }
             },
@@ -340,7 +344,7 @@ function jsonData() {
     $('#table-barang tbody tr').each(function () {
         let elementId = $(this).find("select").attr("id").split("-")[1];
         var obj = {
-            kode_barang: $(this).find("select").val(),
+            barang_id: $(this).find("select").val(),
             jumlah: $(this).find(`#jumlah-${elementId}`).val(),
             satuan_id: $(this).find(`#satuan-${elementId}`).val(),
             harga: $(this).find(`#harga-${elementId}`).val(),

@@ -14,7 +14,7 @@ class BranchService
             return DataTables::of($branchs)->addIndexColumn()->make(true);
         }
 
-        return view('pages.master.cabang',['type_menu' => 'layout']);
+        return view('pages.master.cabang',['type_menu' => 'master']);
     }
 
     public static function store(object $request)

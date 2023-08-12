@@ -17,7 +17,7 @@ class PurchaseOrderService
             return DataTables::of($purchase_order)->addIndexColumn()->make(true);
         }
 
-        return view('pages.pembelian.purchaseOrder',['type_menu' => 'layout']);
+        return view('pages.pembelian.purchaseOrder',['type_menu' => 'pembelian']);
     }
 
     public static function store(object $request)
@@ -33,13 +33,14 @@ class PurchaseOrderService
                 'total_harga'          => $request->total_harga,
                 'deskripsi'            => $request->deskripsi,
                 'status'               => 0,
+                'bapb'                 => 0,
             ]);
 
             $data = [];
             foreach ($request->barang as $value) {
                 $data[] = [
                     'hpurchase_order_id' => $purchase_order->id,
-                    'kode_barang'        => $value['kode_barang'],
+                    'barang_id'          => $value['barang_id'],
                     'jumlah'             => $value['jumlah'],
                     'satuan_id'          => $value['satuan_id'],
                     'harga'              => $value['harga'],
@@ -66,19 +67,20 @@ class PurchaseOrderService
             $purchase_order->purchaseOrders()->delete();
 
             $purchase_order->update([
-                'gudang_id'            => $request->gudang_id,
-                'tanggal'              => $request->tanggal,
-                'supplier_id'          => $request->supplier_id,
-                'total_harga'          => $request->total_harga,
-                'deskripsi'            => $request->deskripsi,
-                'status'               => 0,
+                'gudang_id'   => $request->gudang_id,
+                'tanggal'     => $request->tanggal,
+                'supplier_id' => $request->supplier_id,
+                'total_harga' => $request->total_harga,
+                'deskripsi'   => $request->deskripsi,
+                'status'      => 0,
+                'bapb'        => 0,
             ]);
 
             $data = [];
             foreach ($request->barang as $value) {
                 $data[] = [
                     'hpurchase_order_id' => $purchase_order->id,
-                    'kode_barang'        => $value['kode_barang'],
+                    'barang_id'          => $value['barang_id'],
                     'jumlah'             => $value['jumlah'],
                     'satuan_id'          => $value['satuan_id'],
                     'harga'              => $value['harga'],
@@ -125,8 +127,12 @@ class PurchaseOrderService
     public static function get(int $id)
     {
         $purchase_order = HeaderPurchaseOrder::select('id','nomor_purchase_order','tanggal')
-                                            ->where('kode_cabang', auth()->user()->kode_cabang)
-                                            ->where('supplier_id', $id)
+                                            ->where([
+                                                ['supplier_id', $id],
+                                                ['kode_cabang', auth()->user()->kode_cabang],
+                                                ['status', 1],
+                                                ['bapb', 0]
+                                            ])
                                             ->get();
 
         return response()->json(['data' => $purchase_order]);

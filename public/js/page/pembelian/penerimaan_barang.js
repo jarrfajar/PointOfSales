@@ -53,7 +53,7 @@ function drawTable(data) {
                 render: function (data) {
                     return /*html*/ `
                         <div style="display: flex; justify-content: center; gap: 10px;">
-                            <button type="submit" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showAddModal(${data})"><i class="fas fa-pencil-alt"></i></button>
+                            <button type="submit" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showModal(${data})"><i class="fas fa-pencil-alt"></i></button>
                             <button type="submit" class="btn btn-danger btn-sm btn-action mr-1" data-toggle="tooltip" title="Checkout" onclick="deleteBarang(${data})"><i class="fas fa-trash-alt"></i></button>
                         </div>`
                 },
@@ -63,13 +63,11 @@ function drawTable(data) {
 }
 
 function showModal(id = null) {
-    $('.is-invalid').removeClass('is-invalid')
-    
     $("#modal-penerimaan-barang").modal({
         backdrop: "static",
         keyboard: false,
     })
-
+    
     formReset()
 
     Service.initSelect2({
@@ -92,11 +90,18 @@ function showModal(id = null) {
         $("#modal-title").text("Ubah BAPB");
         $("#btn-form-penerimaan-barang").attr("onclick", `update(${id})`);
         $("#btn-form-penerimaan-barang").text("Ubah");
-        showPurchaseOrder(id);
+        showPenerimaanBarang(id);
     }
 }
 
-const formReset = () => Service.resetForm('form-penerimaan-barang')
+function formReset() {
+    Service.resetForm('modal-penerimaan-barang', 'table-barang')
+    $('#tanggal_po').val('')
+    $('#sub_total').val('')
+    $('#diskon').val('')
+    $('#ppn').val('')
+    $('#total_harga').val('')
+}
 
 function getPurchaseOrder(id) {
     Service.initSelect2({
@@ -132,7 +137,7 @@ function showPurchaseOrder(id) {
             }
         })
 
-        $('#tanggal').val(moment(response.tanggal).format('YYYY-MM-DD'))
+        $('#tanggal_po').val(moment(response.tanggal).format('YYYY-MM-DD'))
         $('#deskripsi').val(response.deskripsi)
         $('#sub_total').val(parseFloat(response.total_harga || 0))
         $('#diskon').val(0)
@@ -157,10 +162,10 @@ function addRow(value = null) {
     $('#table-barang tbody').append(/*html*/`
         <tr>
             <td scope="row">
-                <button type="button" class="btn btn-danger btn-sm btn-action mr-1" onClick="deleteRow(this)"><i class="fas fa-trash-alt"></i></button>
+                <button type="button" class="btn btn-danger btn-sm btn-action mr-1" id="delete_row-${unitRow}"  onClick="deleteRow(this)"><i class="fas fa-trash-alt"></i></button>
             </td>
             <td>
-                <select class="form-control" id="barang_id-${unitRow}" data-name="barang_id"></select>
+                <select class="form-control select" id="barang_id-${unitRow}" data-select="barang_id"></select>
                 <span id="barang_id_err" class="invalid-feedback"></span>
             </td>
             <td>
@@ -170,7 +175,7 @@ function addRow(value = null) {
                 </div>
             </td>
             <td>
-                <select class="form-control" id="satuan-${unitRow}" data-name="satuan"></select>
+                <select class="form-control select" id="satuan-${unitRow}" data-select="satuan_id"></select>
                 <span id="satuan_err" class="invalid-feedback"></span>
             </td>
             <td>
@@ -258,10 +263,20 @@ function addRow(value = null) {
     unitRow++;
 }
 
+function deleteRow(element) {
+    let elementId = $(element).attr("id").split("-")[1]
+    let harga     = parseFloat($(`#total_harga_hidden-${elementId}`).val())
+    let subTotal  = parseFloat($('#sub_total').val())
+    
+    $('#sub_total').val(subTotal - harga)
+    countDiskonWithTax()
+    $(element).parent().parent().remove()
+}
+
 function countTotalPrice(element) {
-    let elementId   = $(element).attr("id").split("-")[1];
-    let jumlah      = $(`#jumlah-${elementId}`).val()
-    let harga       = $(`#harga-${elementId}`).val()
+    let elementId = $(element).attr("id").split("-")[1]
+    let jumlah    = $(`#jumlah-${elementId}`).val()
+    let harga     = $(`#harga-${elementId}`).val()
 
     if (jumlah && harga) {
         let totalHarga = 0
@@ -339,12 +354,12 @@ function countTax(element) {
 }
 
 function countDiskonWithTax() {
-    let diskon    = 0;
-    let tax       = 0;
+    let diskon = 0;
+    let tax    = 0;
 
     $('#table-barang tbody tr').each(function () {
         diskon += parseFloat($(this).children().find('[data-name="diskon_rp"]').val())
-        tax   += parseFloat($(this).children().find('[data-name="tax_hidden"]').val())
+        tax    += parseFloat($(this).children().find('[data-name="tax_hidden"]').val())
     })
     
     $('#diskon').val(diskon)
@@ -364,15 +379,20 @@ function jsonData() {
     let data = [];
     $('#table-barang tbody tr').each(function () {
         let elementId = $(this).find("select").attr("id").split("-")[1];
+
+        if ($(this).find(`#tax-${elementId}`).val() == 'on') {
+            $(this).find(`#tax-${elementId}`).val(0)
+        }
+
         var obj = {
-            barang_id: $(this).find("select").val(),
-            jumlah: $(this).find(`#jumlah-${elementId}`).val(),
-            satuan_id: $(this).find(`#satuan-${elementId}`).val(),
-            harga: $(this).find(`#harga-${elementId}`).val(),
+            barang_id    : $(this).find("select").val(),
+            jumlah       : $(this).find(`#jumlah-${elementId}`).val(),
+            satuan_id    : $(this).find(`#satuan-${elementId}`).val(),
+            harga        : $(this).find(`#harga-${elementId}`).val(),
             diskon_persen: $(this).find(`#diskon_persen-${elementId}`).val(),
-            diskon_rp: $(this).find(`#diskon_rp-${elementId}`).val(),
-            ppn: $(this).find(`#tax-${elementId}`).val(),
-            total_harga: $(this).find(`#total_harga-${elementId}`).val(),
+            diskon_rp    : $(this).find(`#diskon_rp-${elementId}`).val(),
+            ppn          : $(this).find(`#tax-${elementId}`).val(),
+            total_harga  : $(this).find(`#total_harga-${elementId}`).val(),
         }
 
         data.push(obj)
@@ -388,6 +408,11 @@ function jsonData() {
     return jsonData
 }
 
+const initializeDatatable = () => {
+    $("#table-penerimaan-barang").DataTable().destroy();
+    getIndex();
+};
+
 function store() {
     Service.showLoading()
     $('.is-invalid').removeClass('is-invalid')
@@ -401,6 +426,54 @@ function store() {
             
             initializeDatatable()
         }
-    }).catch((err) => Service.handelErrorFetch(err, ['purchase_order_id','kategori_id','satuan_id','gudang_id','supplier_id']))
+    })
+    .catch((err) => Service.handelErrorFetch(err, 'table-barang'))
+    .finally(() => Service.hideLoading())
+}
+
+function showPenerimaanBarang(id) {
+    Service.showLoading()
+    axios.get(`/penerimaan-barang/${id}`)
+    .then((result) => {
+        const response = result.data.data
+
+        Service.select2Selected({
+            id: 'supplier_id',
+            dataOption: {
+                id: response.supplier.id,
+                text: response.supplier.nama,
+            }
+        })
+
+        $('#nomor_bapb').val(response.nomor_bapb)
+        $('#nomor_faktur').val(response.nomor_faktur)
+        $('#tanggal_terima').val(response.tanggal_terima)
+        $('#tanggal_tempo').val(response.tanggal_tempo)
+        $('#nomor_resi').val(response.nomor_resi)
+
+        Service.select2Selected({
+            id: 'purchase_order_id',
+            dataOption: {
+                id: response.purchase_order.id,
+                text: `${response.purchase_order.nomor_purchase_order} | ${moment(response.purchase_order.tanggal).format('YYYY-MM-DD')}`
+            }
+        })
+    })
+    .catch((err) => Service.handelErrorFetch(err, ['purchase_order_id','kategori_id','satuan_id','gudang_id','supplier_id']))
+    .finally(() => Service.hideLoading())
+}
+
+function update(id) {
+    Service.showLoading()
+    axios.put(`/penerimaan-barang/${id}`, jsonData())
+    .then((result) => {
+        if (result.status === 200 || result.status === 201) {
+            $('#modal-penerimaan-barang').modal('hide')
+            swal('Berhasil!', 'BAPB berhasil ditambah!', 'success')
+            
+            initializeDatatable()
+        }
+    })
+    .catch((err) => Service.handelErrorFetch(err, ['purchase_order_id','kategori_id','satuan_id','gudang_id','supplier_id']))
     .finally(() => Service.hideLoading())
 }

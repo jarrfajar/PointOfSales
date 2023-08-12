@@ -13,7 +13,7 @@ class KategoriService
             return DataTables::of($kategori)->addIndexColumn()->make(true);
         }
 
-        return view('pages.master.kategori',['type_menu' => 'layout']);
+        return view('pages.master.kategori',['type_menu' => 'master']);
     }
 
     public static function store(object $request)

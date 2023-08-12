@@ -41,6 +41,6 @@ class DetailPurchaseOrder extends Model
      */
     public function barang(): HasOne
     {
-        return $this->hasOne(Barang::class, 'id', 'kode_barang');
+        return $this->hasOne(Barang::class, 'id', 'barang_id');
     }
 }

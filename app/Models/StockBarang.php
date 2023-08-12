@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Supplier extends Model
+class StockBarang extends Model
 {
     use HasFactory;
+    protected $table = 'stock_barang';
     protected $guarded = [];
     public $timestamps = false;
 }

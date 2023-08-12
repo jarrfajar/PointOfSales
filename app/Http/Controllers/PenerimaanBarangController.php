@@ -17,4 +17,14 @@ class PenerimaanBarangController extends Controller
     {
         return PenerimaanBarangService::store($request);
     }
+
+    public function show(int $id)
+    {
+        return PenerimaanBarangService::show($id);
+    }
+
+    public function update(PenerimaanBarangRequest $request, int $id)
+    {
+        return PenerimaanBarangService::update($request, $id);
+    }
 }
