@@ -27,4 +27,9 @@ class PenerimaanBarangController extends Controller
     {
         return PenerimaanBarangService::update($request, $id);
     }
+
+    public function destroy(int $id)
+    {
+        return PenerimaanBarangService::delete($id);
+    }
 }

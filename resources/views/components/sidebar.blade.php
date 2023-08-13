@@ -63,6 +63,26 @@
                     </li>
                 </ul>
             </li>
+
+            {{-- Stok barang --}}
+            <li class="nav-item dropdown {{ $type_menu === 'stok-barang' ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-columns"></i> <span>Stok Barang</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('stok-barang') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('stok-barang') }}">Stok Barang</a>
+                    </li>
+                    <li class="{{ Request::is('barang-masuk') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('barang-masuk') }}">Barang Masuk</a>
+                    </li>
+                    <li class="{{ Request::is('barang-keluar') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('barang-keluar') }}">Barang Keluar</a>
+                    </li>
+                    <li class="{{ Request::is('barang-retur') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('barang-retur') }}">Barang Retur</a>
+                    </li>
+                </ul>
+            </li>
+
             <li class="{{ Request::is('blank-page') ? 'active' : '' }}">
                 <a class="nav-link"
                     href="{{ url('blank-page') }}"><i class="far fa-square"></i> <span>Blank Page</span></a>

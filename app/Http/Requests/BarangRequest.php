@@ -33,6 +33,8 @@ class BarangRequest extends FormRequest
             'tanggal_kadaluarsa' => ['required','date'],
             'harga_beli'         => ['required','numeric','max:9999999999999999.99'],
             'harga_jual'         => ['required','numeric','max:9999999999999999.99'],
+            'batas_min'          => ['required','numeric','min:1'],
+            'batas_max'          => ['required','numeric','min:2','gte:batas_min'],
         ];
     }
 

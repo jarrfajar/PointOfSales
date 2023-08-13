@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class DetailPenerimaanBarang extends Model
+class DetailReturPenerimaanBarang extends Model
 {
     use HasFactory;
-    protected $table = 'dpenerimaan_barangs';
+    protected $table = 'dretur_penerimaan_barang';
     protected $guarded = [];
     public $timestamps = false;
 
-    /**
+     /**
      * Get the barang associated with the DetailPenerimaanBarang
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
@@ -29,8 +29,8 @@ class DetailPenerimaanBarang extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function penerimaanBarang(): BelongsTo
+    public function returnBarang(): BelongsTo
     {
-        return $this->belongsTo(HeaderPenerimaanBarang::class, 'penerimaan_barang_id', 'id');
+        return $this->belongsTo(HeaderReturPenerimaanBarang::class, 'header_retur_id', 'id');
     }
 }

@@ -258,7 +258,7 @@ function deleteBarang(id) {
         } else {
             swal('Your imaginary file is safe!');
         }
-    });
+    })
 }
 
 function removeErrorClass(element) {

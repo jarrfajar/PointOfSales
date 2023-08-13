@@ -42,6 +42,9 @@ class BarangService
                 'masuk'       => 0,
                 'keluar'      => 0,
                 'jumlah'      => 0,
+                'retur'       => 0,
+                'batas_min'   => $request->batas_min,
+                'batas_max'   => $request->batas_max,
             ]);
     
             DB::commit();
@@ -61,21 +64,42 @@ class BarangService
 
     public static function update(object $request, int $id)
     {
-        $barang = Barang::find($id);
-        $barang->update([
-            'kode_cabang'        => auth()->user()->kode_cabang,
-            'gudang_id'          => $request->gudang_id,
-            'kode_barang'        => $request->kode_barang,
-            'nama_barang'        => $request->nama_barang,
-            'kategori_id'        => $request->kategori_id,
-            'harga_beli'         => $request->harga_beli,
-            'harga_jual'         => $request->harga_jual,
-            'satuan_id'          => $request->satuan_id,
-            'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
-        ]);
+        DB::beginTransaction();
+        try {
+            $barang = Barang::find($id);
+            $barang->update([
+                'kode_cabang'        => auth()->user()->kode_cabang,
+                'gudang_id'          => $request->gudang_id,
+                'kode_barang'        => $request->kode_barang,
+                'nama_barang'        => $request->nama_barang,
+                'kategori_id'        => $request->kategori_id,
+                'harga_beli'         => $request->harga_beli,
+                'harga_jual'         => $request->harga_jual,
+                'satuan_id'          => $request->satuan_id,
+                'tanggal_kadaluarsa' => $request->tanggal_kadaluarsa,
+            ]);            
 
-        return response()->json(['data' => $barang]);
+            StockBarang::where('barang_id', $id)->update([
+                'kode_cabang' => auth()->user()->kode_cabang,
+                'gudang_id'   => $request->gudang_id,
+                'barang_id'   => $barang->id,
+                'masuk'       => 0,
+                'keluar'      => 0,
+                'jumlah'      => 0,
+                'retur'       => 0,
+                'batas_min'   => $request->batas_min,
+                'batas_max'   => $request->batas_max,
+            ]);
+            
+            DB::commit();
+            
+            return response()->json(['data' => $barang]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
+    
 
     public static function delete(int $id)
     {

@@ -79,13 +79,13 @@
         </div>
 
         <div class="row">
-            <x-input-col type="date" name="tanggal_terima" label="Tanggal Terima"></x-input-col>
-            <x-input-col type="date" name="tanggal_tempo" label="Tanggal Jatuh Tempo"></x-input-col>
+            <x-text-area-col name="deskripsi" label="Deskripsi"></x-text-area-col>
+            <x-input-col type="text" name="nomor_resi" label="Nomor Resi"></x-input-col>
         </div>
 
         <div class="row">
-            <x-text-area-col name="deskripsi" label="Deskripsi"></x-text-area-col>
-            <x-input-col type="text" name="nomor_resi" label="Nomor Resi"></x-input-col>
+            <x-input-col type="date" name="tanggal_terima" label="Tanggal Terima"></x-input-col>
+            <x-input-col type="date" name="tanggal_tempo" label="Tanggal Jatuh Tempo"></x-input-col>
         </div>
 
         <h6>Barang</h6>

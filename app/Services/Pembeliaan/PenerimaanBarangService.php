@@ -13,7 +13,7 @@ class PenerimaanBarangService
 {
     public static function index()
     {
-        $penerimaan_barang = HeaderPenerimaanBarang::with('supplier','gudang','barangs')
+        $penerimaan_barang = HeaderPenerimaanBarang::with('supplier','gudang')
                                                ->where('kode_cabang', auth()->user()->kode_cabang)
                                                ->orderBy('id', 'desc');
 
@@ -145,6 +145,32 @@ class PenerimaanBarangService
             DB::commit();
         
             return response()->json(['data' => $header_penerimaan_barang]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
+    public static function delete(int $id)
+    {
+        DB::beginTransaction();
+        try {
+            $penerimaan_barang = HeaderPenerimaanBarang::with('barangs')->find($id);
+
+            $penerimaan_barang->barangs->map(function($item, $key){
+                $stock = StockBarang::where('barang_id', $item['barang_id'])->first();
+                $stock->update([
+                    'masuk'  => $stock->masuk - $item['jumlah'],
+                    'jumlah' => $stock->jumlah - $item['jumlah']
+                ]);
+            });
+
+            $penerimaan_barang->barangs()->delete();
+            $penerimaan_barang->delete();
+    
+            DB::commit();
+        
+            return response()->json(['data' => $penerimaan_barang]);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['error' => $th->getMessage()], 500);

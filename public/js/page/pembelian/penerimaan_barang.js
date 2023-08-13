@@ -2,7 +2,7 @@ let unitRow = 1
 
 $(document).ready(function () {
     getIndex()
-});
+})
 
 function getIndex() {
     Service.showLoading()
@@ -14,7 +14,6 @@ function getIndex() {
     }).catch((err) => handelErrorFetch(err))
     .finally(() => Service.hideLoading())
 }
-
 
 function drawTable(data) {
     $("#table-penerimaan-barang").DataTable({
@@ -54,7 +53,7 @@ function drawTable(data) {
                     return /*html*/ `
                         <div style="display: flex; justify-content: center; gap: 10px;">
                             <button type="submit" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showModal(${data})"><i class="fas fa-pencil-alt"></i></button>
-                            <button type="submit" class="btn btn-danger btn-sm btn-action mr-1" data-toggle="tooltip" title="Checkout" onclick="deleteBarang(${data})"><i class="fas fa-trash-alt"></i></button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-action mr-1" data-toggle="tooltip" title="Checkout" onclick="deleteBapb(${data})"><i class="fas fa-trash-alt"></i></button>
                         </div>`
                 },
             },
@@ -372,7 +371,7 @@ function countTotal() {
     let diskon    = parseFloat($('#diskon').val())
     let ppn       = parseFloat($('#ppn').val())
 
-    $('#total_harga').val(sub_total - diskon - ppn);
+    $('#total_harga').val(sub_total - diskon + ppn);
 }
 
 function jsonData() {
@@ -459,7 +458,7 @@ function showPenerimaanBarang(id) {
             }
         })
     })
-    .catch((err) => Service.handelErrorFetch(err, ['purchase_order_id','kategori_id','satuan_id','gudang_id','supplier_id']))
+    .catch((err) => Service.handelErrorFetch(err, 'table-barang'))
     .finally(() => Service.hideLoading())
 }
 
@@ -474,6 +473,35 @@ function update(id) {
             initializeDatatable()
         }
     })
-    .catch((err) => Service.handelErrorFetch(err, ['purchase_order_id','kategori_id','satuan_id','gudang_id','supplier_id']))
+    .catch((err) => Service.handelErrorFetch(err, 'table-barang'))
     .finally(() => Service.hideLoading())
+}
+
+function deleteBapb(id) {
+    swal({
+        title: 'Are you sure?',
+        text: 'Once deleted, you will not be able to recover this imaginary file!',
+        icon: 'warning',
+        buttons: true,
+        dangerMode: true,
+    })
+    .then((willDelete) => {
+        if (willDelete) {
+            Service.showLoading()
+            axios.delete(`/penerimaan-barang/${id}`)
+            .then((result) => {
+                if (result.status === 200 || result.status === 201) {
+                    $('#modal-penerimaan-barang').modal('hide')
+                    swal('Berhasil!', 'BAPB berhasil ditambah!', 'success')
+                    
+                    initializeDatatable()
+                }
+            })
+            .catch((err) => Service.handelErrorFetch(err))
+            .finally(() => Service.hideLoading())
+            
+        } else {
+            swal('Your imaginary file is safe!');
+        }
+    })
 }

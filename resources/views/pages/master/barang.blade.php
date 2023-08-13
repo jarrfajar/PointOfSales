@@ -85,6 +85,11 @@
         </div>
 
         <div class="row">
+            <x-input-col type="number" name="batas_min" label="Batas Minimal"></x-input-col>
+            <x-input-col type="number" name="batas_max" label="Batas Maximal"></x-input-col>
+        </div>
+
+        <div class="row">
             <x-input-col type="text" name="harga_beli" label="Harga Beli"></x-input-col>
             <x-input-col type="text" name="harga_jual" label="Harga Jual"></x-input-col>
         </div>

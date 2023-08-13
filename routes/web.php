@@ -7,9 +7,14 @@ use App\Http\Controllers\GudangController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PenerimaanBarangController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\ReturPenerimaanBarangController;
 use App\Http\Controllers\SatuanController;
+use App\Http\Controllers\StokBarangController;
 use App\Http\Controllers\SupplierController;
+use App\Models\HeaderPenerimaanBarang;
+use App\Models\StockBarang;
 use App\Services\SerialNumberService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,7 +47,9 @@ Route::get('/dashboard-general-dashboard', function () {
 });
 
 Route::get('/test', function () {
-    return SerialNumberService::genereteNumber('FJR', 'PO');
+    $penerimaan_barang = HeaderPenerimaanBarang::with('barangs')->find(1);
+
+    return response()->json(['data' => $penerimaan_barang]);
 });
 
 Route::get('/cabang', [BranchController::class, 'index'])->name('cabang');
@@ -86,6 +93,7 @@ Route::put('/supplier/{id}', [SupplierController::class, 'update']);
 Route::delete('/supplier/{id}', [SupplierController::class, 'destroy']);
 Route::get('/supplier-search', [SupplierController::class, 'search']);
 
+/**----------------------------------PEMBELIAN----------------------------------- */
 Route::get('/purchase-order', [PurchaseOrderController::class, 'index'])->name('purchase_order');
 Route::get('/purchase-order/{id}', [PurchaseOrderController::class, 'show']);
 Route::get('/purchase-order/get/{id}', [PurchaseOrderController::class, 'get']);
@@ -100,6 +108,18 @@ Route::get('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'show'
 Route::post('/penerimaan-barang', [PenerimaanBarangController::class, 'store']);
 Route::put('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'update']);
 Route::delete('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'destroy']);
+
+Route::get('/retur-penerimaan-barang', [ReturPenerimaanBarangController::class, 'index']);
+Route::get('/retur-penerimaan-barang/{id}', [ReturPenerimaanBarangController::class, 'show']);
+Route::post('/retur-penerimaan-barang', [ReturPenerimaanBarangController::class, 'store']);
+Route::put('/retur-penerimaan-barang/{id}', [ReturPenerimaanBarangController::class, 'update']);
+Route::delete('/retur-penerimaan-barang/{id}', [ReturPenerimaanBarangController::class, 'destroy']);
+
+/**----------------------------------STOK BARANG----------------------------------- */
+Route::get('/stok-barang', [StokBarangController::class, 'index']);
+Route::get('/barang-masuk', [StokBarangController::class, 'masuk']);
+Route::get('/barang-keluar', [StokBarangController::class, 'keluar']);
+Route::get('/barang-retur', [StokBarangController::class, 'retur']);
 
 
 // Layout

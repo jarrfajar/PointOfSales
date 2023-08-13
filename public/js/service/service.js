@@ -51,7 +51,8 @@ class Service {
      * @returns 
      */
     static handelErrorFetch(err, idTable = null) {
-        if (err.response.status === 422) {
+        console.log(err);
+        if (err?.response?.status === 422) {
             let error = err.response.data;
 
             $('.is-invalid').removeClass('is-invalid')
