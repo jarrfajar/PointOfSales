@@ -95,7 +95,7 @@
     <script src={{ asset('library/datatables/Select-1.2.4/js/dataTables.select.min.js') }}></script>
     <script src="{{ asset('library/select2/dist/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('library/sweetalert/dist/sweetalert.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{ asset('library/axios/dist/axios.min.js') }}"></script>
     
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/master/gudang.js') }}"></script>

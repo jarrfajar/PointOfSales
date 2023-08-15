@@ -1,18 +1,20 @@
-let unitRow = 1
+let unitRow = 1;
 
 $(document).ready(function () {
-    getIndex()
-})
+    getIndex();
+});
 
 function getIndex() {
-    Service.showLoading()
-    
-    axios.get('/penerimaan-barang')
-    .then((result) => {
-        const response = result.data.data
-        drawTable(response)
-    }).catch((err) => handelErrorFetch(err))
-    .finally(() => Service.hideLoading())
+    Service.showLoading();
+
+    axios
+        .get("/penerimaan-barang")
+        .then((result) => {
+            const response = result.data.data;
+            drawTable(response);
+        })
+        .catch((err) => handelErrorFetch(err))
+        .finally(() => Service.hideLoading());
 }
 
 function drawTable(data) {
@@ -29,57 +31,75 @@ function drawTable(data) {
             },
             {
                 data: "gudang",
-                render: (data) => data.nama
+                render: (data) => data.nama,
             },
             {
                 data: "supplier",
-                render: (data) => data.nama
+                render: (data) => data.nama,
             },
             {
                 data: "tanggal_terima",
-                render: (data) => moment(data).format('YYYY-MM-DD')
+                render: (data) => moment(data).format("YYYY-MM-DD"),
             },
             {
                 data: "tanggal_tempo",
-                render: (data) => moment(data).format('YYYY-MM-DD')
+                render: (data) => moment(data).format("YYYY-MM-DD"),
             },
             {
                 data: "total_harga",
-                render: (data) => parseFloat(data).toLocaleString('id-ID'),
+                render: (data) => parseFloat(data).toLocaleString("id-ID"),
             },
             {
-                data: "id",
+                data: "status",
                 render: function (data) {
-                    return /*html*/ `
-                        <div style="display: flex; justify-content: center; gap: 10px;">
-                            <button type="submit" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showModal(${data})"><i class="fas fa-pencil-alt"></i></button>
-                            <button type="submit" class="btn btn-danger btn-sm btn-action mr-1" data-toggle="tooltip" title="Checkout" onclick="deleteBapb(${data})"><i class="fas fa-trash-alt"></i></button>
-                        </div>`
+                    if (data === 1) {
+                        return /*html*/ `<span class="badge badge-primary">Terverifikasi</span>`;
+                    } else {
+                        return /*html*/ `<span class="badge badge-warning">Menuggu Verifikasi</span>`;
+                    }
+                },
+            },
+            {
+                data: "status",
+                render: function (status, type, data) {
+                    if (status === 1) {
+                        return /*html*/ `
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="See" onclick="showModal(${data.id}, false)"><i class="fa-regular fa-eye fa-xl"></i></button>
+                        </div>
+                        `;
+                    } else {
+                        return /*html*/ `
+                            <div style="display: flex; justify-content: center; gap: 10px;">
+                                <button type="button" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showModal(${data.id})"><i class="fas fa-pencil-alt"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm btn-action mr-1" data-toggle="tooltip" title="Checkout" onclick="deleteBapb(${data.id})"><i class="fas fa-trash-alt"></i></button>
+                            </div>`;
+                    }
                 },
             },
         ],
-    })
+    });
 }
 
-function showModal(id = null) {
+function showModal(id = null, saveAndReset = true) {
+    console.log(`modal ${saveAndReset}`);
     $("#modal-penerimaan-barang").modal({
         backdrop: "static",
         keyboard: false,
-    })
-    
-    formReset()
+    });
+
+    formReset();
 
     Service.initSelect2({
-        id: 'supplier_id',
-        uri: 'supplier-search',
+        id: "supplier_id",
+        uri: "supplier-search",
         item: function (item) {
             return {
                 id: item.id,
-                text: item.nama
-            }
-        }
-    })
-    
+                text: item.nama,
+            };
+        },
+    });
 
     if (id == null) {
         $("#modal-title").text("Tambah BAPB");
@@ -89,79 +109,100 @@ function showModal(id = null) {
         $("#modal-title").text("Ubah BAPB");
         $("#btn-form-penerimaan-barang").attr("onclick", `update(${id})`);
         $("#btn-form-penerimaan-barang").text("Ubah");
-        showPenerimaanBarang(id);
+        showPenerimaanBarang(id, saveAndReset);
+    }
+
+    if (saveAndReset) {
+        $('#btn-form-penerimaan-barang').show()
+        $('#reset-form-modal').show()
+    } else {
+        $('#btn-form-penerimaan-barang').hide()
+        $('#reset-form-modal').hide()
     }
 }
 
 function formReset() {
-    Service.resetForm('modal-penerimaan-barang', 'table-barang')
-    $('#tanggal_po').val('')
-    $('#sub_total').val('')
-    $('#diskon').val('')
-    $('#ppn').val('')
-    $('#total_harga').val('')
+    Service.resetForm("modal-penerimaan-barang", "table-barang");
+    $("#nomor_bapb").val("");
+    $("#nomor_faktur").val("");
+    $("#nomor_resi").val("");
+    $("#tanggal_terima").val("");
+    $("#tanggal_tempo").val("");
+    $("#tanggal_po").val("");
+    $("#sub_total").val("");
+    $("#diskon").val("");
+    $("#ppn").val("");
+    $("#total_harga").val("");
 }
 
 function getPurchaseOrder(id) {
     Service.initSelect2({
-        id: 'purchase_order_id',
+        id: "purchase_order_id",
         uri: `purchase-order/get/${id}`,
         item: function (item) {
             return {
                 id: item.id,
-                text: `${item.nomor_purchase_order} | ${moment(item.tanggal).format('YYYY-MM-DD')}`
-            }
-        }
-    })
+                text: `${item.nomor_purchase_order} | ${moment(item.tanggal).format("YYYY-MM-DD")}`,
+            };
+        },
+    });
 }
 
-$('#purchase_order_id').on('change', function() {
-    showPurchaseOrder($(this).val())
-
-    unitRow = 1
-    $('#table-barang tbody tr').each((key, row) => $(row).remove())
-})
+function changePurchaseOrder(id) {
+    showPurchaseOrder(id)
+    console.log('jalan');
+    
+    unitRow = 1;
+    $("#table-barang tbody tr").each((key, row) => $(row).remove())
+}
 
 function showPurchaseOrder(id) {
     Service.showLoading();
-    axios.get(`/purchase-order/${id}`)
-    .then((result) => {
-        const response = result.data.data
-        
-        Service.select2Selected({
-            id: 'gudang_id',
-            dataOption: {
-                id: response.gudang.id,
-                text: response.gudang.nama,
-            }
+    axios
+        .get(`/purchase-order/${id}`)
+        .then((result) => {
+            const response = result.data.data;
+
+            Service.select2Selected({
+                id: "gudang_id",
+                dataOption: {
+                    id: response.gudang.id,
+                    text: response.gudang.nama,
+                },
+            });
+
+            $("#tanggal_po").val(moment(response.tanggal).format("YYYY-MM-DD"));
+            $("#deskripsi").val(response.deskripsi);
+            $("#sub_total").val(parseFloat(response.total_harga || 0));
+            $("#diskon").val(0);
+            $("#diskon_hidden").val(0);
+            $("#ppn").val(0);
+            $("#total_harga").val(parseFloat(response.total_harga || 0));
+
+            response.purchase_orders.forEach( function(value) {
+                addRow(value)
+                if (value.ppn == 1) {
+                    $('.custom-switch-input').prop("checked", true)
+                }
+            });
         })
-
-        $('#tanggal_po').val(moment(response.tanggal).format('YYYY-MM-DD'))
-        $('#deskripsi').val(response.deskripsi)
-        $('#sub_total').val(parseFloat(response.total_harga || 0))
-        $('#diskon').val(0)
-        $('#diskon_hidden').val(0)
-        $('#ppn').val(0)
-        $('#total_harga').val(parseFloat(response.total_harga || 0))
-        
-        response.purchase_orders.forEach((value) => addRow(value))
-
-    }).catch((err) => Service.handelErrorFetch(err))
-    .finally(() => Service.hideLoading())
+        .catch((err) => Service.handelErrorFetch(err))
+        .finally(() => Service.hideLoading());
 }
 
-function addRow(value = null) {
-    let gudang = $('#gudang_id').val()
-    
+function addRow(value = null, saveAndReset = true) {
+    console.log(`addRow ${saveAndReset}`);
+    let gudang = $("#gudang_id").val();
+
     if (gudang == null) {
-        swal('Gagal', 'Pilih gudang terlebih dahulu', "error")
-        return
+        swal("Gagal", "Pilih gudang terlebih dahulu", "error");
+        return;
     }
-    
-    $('#table-barang tbody').append(/*html*/`
+
+    $("#table-barang tbody").append(/*html*/ `
         <tr>
             <td scope="row">
-                <button type="button" class="btn btn-danger btn-sm btn-action mr-1" id="delete_row-${unitRow}"  onClick="deleteRow(this)"><i class="fas fa-trash-alt"></i></button>
+                <button type="button" class="btn btn-danger btn-sm btn-action mr-1 btn-deleteRow" id="delete_row-${unitRow}"  onClick="deleteRow(this)"><i class="fas fa-trash-alt"></i></button>
             </td>
             <td>
                 <select class="form-control select" id="barang_id-${unitRow}" data-select="barang_id"></select>
@@ -179,7 +220,9 @@ function addRow(value = null) {
             </td>
             <td>
                 <div>
-                    <input type="number" class="form-control" id="harga-${unitRow}" value="${parseFloat(value?.harga || 0)}" data-name="harga" onchange="countTotalPrice(this)">
+                    <input type="number" class="form-control" id="harga-${unitRow}" value="${parseFloat(
+                        value?.harga || 0,
+                    )}" data-name="harga" onchange="countTotalPrice(this)">
                     <span id="harga_err" class="invalid-feedback"></span>
                 </div>
             </td>
@@ -210,7 +253,17 @@ function addRow(value = null) {
                 </div>
             </td>
         </tr>
-    `)
+    `);
+
+    if (value.ppn == 1) {
+        $(`#tax-${unitRow}`).prop('checked', true).trigger('change')
+    }
+
+    if (saveAndReset) {
+        $('input, select, textarea, .btn-deleteRow, .btn-addRow').prop("disabled", false)
+    } else {
+        $('input, select, textarea, .btn-deleteRow, .btn-addRow').prop("disabled", true)
+    }
 
     if (value) {
         Service.select2Selected({
@@ -218,43 +271,43 @@ function addRow(value = null) {
             dataOption: {
                 id: value.barang.id,
                 text: value.barang.nama_barang,
-            }
+            },
         })
-        
+
         Service.select2Selected({
             id: `satuan-${unitRow}`,
             dataOption: {
                 id: value.satuan.id,
                 text: value.satuan.nama,
-            }
+            },
         })
     } else {
         Service.initSelect2({
-            id:`satuan-${unitRow}`,
-            uri: 'satuan-search',
+            id: `satuan-${unitRow}`,
+            uri: "satuan-search",
             item: function (item) {
                 return {
                     id: item.id,
-                    text: item.nama
-                }
-            }
+                    text: item.nama,
+                };
+            },
         })
 
-        let gudang = $('#gudang_id').val()
+        let gudang = $("#gudang_id").val();
         Service.initSelect2({
-            id:`barang_id-${unitRow}`,
-            uri: 'barang-search',
+            id: `barang_id-${unitRow}`,
+            uri: "barang-search",
             params: function (data) {
                 return {
                     search: data.term,
                     gudang: gudang,
-                }
+                };
             },
             item: function (item) {
                 return {
                     id: item.id,
-                    text: item.nama_barang
-                }
+                    text: item.nama_barang,
+                };
             },
         })
     }
@@ -263,148 +316,159 @@ function addRow(value = null) {
 }
 
 function deleteRow(element) {
-    let elementId = $(element).attr("id").split("-")[1]
-    let harga     = parseFloat($(`#total_harga_hidden-${elementId}`).val())
-    let subTotal  = parseFloat($('#sub_total').val())
-    
-    $('#sub_total').val(subTotal - harga)
-    countDiskonWithTax()
-    $(element).parent().parent().remove()
+    let elementId = $(element).attr("id").split("-")[1];
+    let harga = parseFloat($(`#total_harga_hidden-${elementId}`).val());
+    let subTotal = parseFloat($("#sub_total").val());
+
+    $("#sub_total").val(subTotal - harga);
+    countDiskonWithTax();
+    $(element).parent().parent().remove();
 }
 
 function countTotalPrice(element) {
-    let elementId = $(element).attr("id").split("-")[1]
-    let jumlah    = $(`#jumlah-${elementId}`).val()
-    let harga     = $(`#harga-${elementId}`).val()
+    let elementId = $(element).attr("id").split("-")[1];
+    let jumlah = $(`#jumlah-${elementId}`).val();
+    let harga = $(`#harga-${elementId}`).val();
 
     if (jumlah && harga) {
-        let totalHarga = 0
+        let totalHarga = 0;
 
-        $(`#total_harga-${elementId}`).val(parseFloat(harga) * parseInt(jumlah))
-        $(`#total_harga_hidden-${elementId}`).val(parseFloat(harga) * parseInt(jumlah))
-        
-        $('#table-barang tbody tr').each(function(key, row) {
-            totalHarga += parseFloat($(row).find('[data-name="total_harga"]').val())
-        })
-        
-        $('#sub_total').val(totalHarga)
-        countTotal()
-    } 
+        $(`#total_harga-${elementId}`).val(
+            parseFloat(harga) * parseInt(jumlah),
+        );
+        $(`#total_harga_hidden-${elementId}`).val(
+            parseFloat(harga) * parseInt(jumlah),
+        );
+
+        $("#table-barang tbody tr").each(function (key, row) {
+            totalHarga += parseFloat(
+                $(row).find('[data-name="total_harga"]').val(),
+            );
+        });
+
+        $("#sub_total").val(totalHarga);
+        countTotal();
+    }
 }
 
 function countDiskonPersen(element) {
-    let elementId          = $(element).attr("id").split("-")[1];
-    let total_harga_hidden = $(`#total_harga_hidden-${elementId}`).val()
-    let diskon_persen      = $(`#diskon_persen-${elementId}`).val()
-    
+    let elementId = $(element).attr("id").split("-")[1];
+    let total_harga_hidden = $(`#total_harga_hidden-${elementId}`).val();
+    let diskon_persen = $(`#diskon_persen-${elementId}`).val();
+
     if (diskon_persen > 0) {
-        let diskon_harga = total_harga_hidden * (diskon_persen / 100).toFixed(2)
+        let diskon_harga =
+            total_harga_hidden * (diskon_persen / 100).toFixed(2);
 
-        $(`#diskon_rp-${elementId}`).val(diskon_harga)
-        $(`#total_harga-${elementId}`).val(total_harga_hidden - diskon_harga)
+        $(`#diskon_rp-${elementId}`).val(diskon_harga);
+        $(`#total_harga-${elementId}`).val(total_harga_hidden - diskon_harga);
 
-        $(`#tax-${elementId}`).trigger('change');
-        countDiskonWithTax()
+        $(`#tax-${elementId}`).trigger("change");
+        countDiskonWithTax();
     } else {
-        $(`#total_harga-${elementId}`).val(total_harga_hidden)
-        $(`#tax-${elementId}`).trigger('change');
-        countDiskonWithTax()
+        $(`#total_harga-${elementId}`).val(total_harga_hidden);
+        $(`#tax-${elementId}`).trigger("change");
+        countDiskonWithTax();
     }
 }
 
 function countDiskonRp(element) {
-    let elementId          = $(element).attr("id").split("-")[1];
-    let diskon_rp          = parseFloat($(`#diskon_rp-${elementId}`).val())
-    let total_harga_hidden = $(`#total_harga_hidden-${elementId}`).val()
+    let elementId = $(element).attr("id").split("-")[1];
+    let diskon_rp = parseFloat($(`#diskon_rp-${elementId}`).val());
+    let total_harga_hidden = $(`#total_harga_hidden-${elementId}`).val();
 
-    $(`#diskon_persen-${elementId}`).val(0)
+    $(`#diskon_persen-${elementId}`).val(0);
 
     if (diskon_rp > 0) {
-        $(`#total_harga-${elementId}`).val(total_harga_hidden - diskon_rp)
+        $(`#total_harga-${elementId}`).val(total_harga_hidden - diskon_rp);
 
-        $(`#tax-${elementId}`).trigger('change');
-        countDiskonWithTax()
+        $(`#tax-${elementId}`).trigger("change");
+        countDiskonWithTax();
     } else {
-        $(`#total_harga-${elementId}`).val(total_harga_hidden)
-        $(`#tax-${elementId}`).trigger('change');
-        countDiskonWithTax()
+        $(`#total_harga-${elementId}`).val(total_harga_hidden);
+        $(`#tax-${elementId}`).trigger("change");
+        countDiskonWithTax();
     }
 }
 
 function countTax(element) {
-    let elementId   = $(element).attr("id").split("-")[1];
-    let total_harga = parseFloat($(`#total_harga-${elementId}`).val())
-    let ppn         = parseFloat($('#ppn').val())
+    let elementId = $(element).attr("id").split("-")[1];
+    let total_harga = parseFloat($(`#total_harga-${elementId}`).val());
+    let ppn = parseFloat($("#ppn").val());
 
-    if ($(element).is(':checked')) {
-        $(element).val(1)
-        let tax = (total_harga * 11) / 100
+    if ($(element).is(":checked")) {
+        $(element).val(1);
+        let tax = (total_harga * 11) / 100;
 
-        $(`#tax_hidden-${elementId}`).val(tax)
-        $('#ppn').val(ppn + tax)
+        $(`#tax_hidden-${elementId}`).val(tax);
+        $("#ppn").val(ppn + tax);
     } else {
-        $(element).val(0)
-        let tax_hidden = parseFloat($(`#tax_hidden-${elementId}`).val())
-        $('#ppn').val(ppn - tax_hidden)
-        $(`#tax_hidden-${elementId}`).val(0)
+        $(element).val(0);
+        let tax_hidden = parseFloat($(`#tax_hidden-${elementId}`).val());
+        $("#ppn").val(ppn - tax_hidden);
+        $(`#tax_hidden-${elementId}`).val(0);
     }
 
-    countTotal()
+    countTotal();
 }
 
 function countDiskonWithTax() {
     let diskon = 0;
-    let tax    = 0;
+    let tax = 0;
 
-    $('#table-barang tbody tr').each(function () {
-        diskon += parseFloat($(this).children().find('[data-name="diskon_rp"]').val())
-        tax    += parseFloat($(this).children().find('[data-name="tax_hidden"]').val())
-    })
-    
-    $('#diskon').val(diskon)
-    $('#ppn').val(tax)
-    countTotal()
+    $("#table-barang tbody tr").each(function () {
+        diskon += parseFloat(
+            $(this).children().find('[data-name="diskon_rp"]').val(),
+        );
+        tax += parseFloat(
+            $(this).children().find('[data-name="tax_hidden"]').val(),
+        );
+    });
+
+    $("#diskon").val(diskon);
+    $("#ppn").val(tax);
+    countTotal();
 }
 
 function countTotal() {
-    let sub_total = parseFloat($('#sub_total').val())
-    let diskon    = parseFloat($('#diskon').val())
-    let ppn       = parseFloat($('#ppn').val())
+    let sub_total = parseFloat($("#sub_total").val());
+    let diskon = parseFloat($("#diskon").val());
+    let ppn = parseFloat($("#ppn").val());
 
-    $('#total_harga').val(sub_total - diskon + ppn);
+    $("#total_harga").val(sub_total - diskon + ppn);
 }
 
 function jsonData() {
     let data = [];
-    $('#table-barang tbody tr').each(function () {
+    $("#table-barang tbody tr").each(function () {
         let elementId = $(this).find("select").attr("id").split("-")[1];
 
-        if ($(this).find(`#tax-${elementId}`).val() == 'on') {
-            $(this).find(`#tax-${elementId}`).val(0)
+        if ($(this).find(`#tax-${elementId}`).val() == "on") {
+            $(this).find(`#tax-${elementId}`).val(0);
         }
 
         var obj = {
-            barang_id    : $(this).find("select").val(),
-            jumlah       : $(this).find(`#jumlah-${elementId}`).val(),
-            satuan_id    : $(this).find(`#satuan-${elementId}`).val(),
-            harga        : $(this).find(`#harga-${elementId}`).val(),
+            barang_id: $(this).find("select").val(),
+            jumlah: $(this).find(`#jumlah-${elementId}`).val(),
+            satuan_id: $(this).find(`#satuan-${elementId}`).val(),
+            harga: $(this).find(`#harga-${elementId}`).val(),
             diskon_persen: $(this).find(`#diskon_persen-${elementId}`).val(),
-            diskon_rp    : $(this).find(`#diskon_rp-${elementId}`).val(),
-            ppn          : $(this).find(`#tax-${elementId}`).val(),
-            total_harga  : $(this).find(`#total_harga-${elementId}`).val(),
-        }
+            diskon_rp: $(this).find(`#diskon_rp-${elementId}`).val(),
+            ppn: $(this).find(`#tax-${elementId}`).val(),
+            total_harga: $(this).find(`#total_harga-${elementId}`).val(),
+        };
 
-        data.push(obj)
-    })
+        data.push(obj);
+    });
 
-    let form = new FormData(document.getElementById("form-penerimaan-barang"))
+    let form = new FormData(document.getElementById("form-penerimaan-barang"));
     let jsonData = {
         barang: data,
     };
 
-    form.forEach((value, key) => (jsonData[key] = value))
+    form.forEach((value, key) => (jsonData[key] = value));
 
-    return jsonData
+    return jsonData;
 }
 
 const initializeDatatable = () => {
@@ -413,95 +477,107 @@ const initializeDatatable = () => {
 };
 
 function store() {
-    Service.showLoading()
-    $('.is-invalid').removeClass('is-invalid')
-    $('.invalid').html('')
+    Service.showLoading();
+    $(".is-invalid").removeClass("is-invalid");
+    $(".invalid").html("");
 
-    axios.post('/penerimaan-barang', jsonData())
-    .then((result) => {
-        if (result.status === 200 || result.status === 201) {
-            $('#modal-penerimaan-barang').modal('hide')
-            swal('Berhasil!', 'BAPB berhasil ditambah!', 'success')
-            
-            initializeDatatable()
-        }
-    })
-    .catch((err) => Service.handelErrorFetch(err, 'table-barang'))
-    .finally(() => Service.hideLoading())
+    axios
+        .post("/penerimaan-barang", jsonData())
+        .then((result) => {
+            if (result.status === 200 || result.status === 201) {
+                $("#modal-penerimaan-barang").modal("hide");
+                swal("Berhasil!", "BAPB berhasil ditambah!", "success");
+
+                initializeDatatable();
+            }
+        })
+        .catch((err) => Service.handelErrorFetch(err, "table-barang"))
+        .finally(() => Service.hideLoading());
 }
 
-function showPenerimaanBarang(id) {
-    Service.showLoading()
-    axios.get(`/penerimaan-barang/${id}`)
-    .then((result) => {
-        const response = result.data.data
+function showPenerimaanBarang(id, saveAndReset = true) {
+    console.log(`showPenerimaanBarang ${saveAndReset}`);
+    Service.showLoading();
+    axios
+        .get(`/penerimaan-barang/${id}`)
+        .then((result) => {
+            const response = result.data.data;
 
-        Service.select2Selected({
-            id: 'supplier_id',
-            dataOption: {
-                id: response.supplier.id,
-                text: response.supplier.nama,
-            }
-        })
+            Service.select2Selected({
+                id: "supplier_id",
+                dataOption: {
+                    id: response.supplier.id,
+                    text: response.supplier.nama,
+                },
+            })
 
-        $('#nomor_bapb').val(response.nomor_bapb)
-        $('#nomor_faktur').val(response.nomor_faktur)
-        $('#tanggal_terima').val(response.tanggal_terima)
-        $('#tanggal_tempo').val(response.tanggal_tempo)
-        $('#nomor_resi').val(response.nomor_resi)
+            Service.select2Selected({
+                id: "gudang_id",
+                dataOption: {
+                    id: response.gudang.id,
+                    text: response.gudang.nama,
+                },
+            })
 
-        Service.select2Selected({
-            id: 'purchase_order_id',
-            dataOption: {
+            var optionData = {
                 id: response.purchase_order.id,
-                text: `${response.purchase_order.nomor_purchase_order} | ${moment(response.purchase_order.tanggal).format('YYYY-MM-DD')}`
+                text: `${response.purchase_order.nomor_purchase_order} | ${moment(response.purchase_order.tanggal).format("YYYY-MM-DD")}`,
             }
+        
+            var newOption = new Option(optionData.text, optionData.id)
+            $('#purchase_order_id').empty().append(newOption)
+            
+            $.each(response, function(key,value) {
+                $(`input#${key}`).val(value)
+                $(`textarea#${key}`).val(value)
+            })
+
+            response.barangs.forEach(value => addRow(value, saveAndReset))
         })
-    })
-    .catch((err) => Service.handelErrorFetch(err, 'table-barang'))
-    .finally(() => Service.hideLoading())
+        .catch((err) => Service.handelErrorFetch(err, "table-barang"))
+        .finally(() => Service.hideLoading());
 }
 
 function update(id) {
-    Service.showLoading()
-    axios.put(`/penerimaan-barang/${id}`, jsonData())
-    .then((result) => {
-        if (result.status === 200 || result.status === 201) {
-            $('#modal-penerimaan-barang').modal('hide')
-            swal('Berhasil!', 'BAPB berhasil ditambah!', 'success')
-            
-            initializeDatatable()
-        }
-    })
-    .catch((err) => Service.handelErrorFetch(err, 'table-barang'))
-    .finally(() => Service.hideLoading())
+    Service.showLoading();
+    axios
+        .put(`/penerimaan-barang/${id}`, jsonData())
+        .then((result) => {
+            if (result.status === 200 || result.status === 201) {
+                $("#modal-penerimaan-barang").modal("hide");
+                swal("Berhasil!", "BAPB berhasil ditambah!", "success");
+
+                initializeDatatable();
+            }
+        })
+        .catch((err) => Service.handelErrorFetch(err, "table-barang"))
+        .finally(() => Service.hideLoading());
 }
 
 function deleteBapb(id) {
     swal({
-        title: 'Are you sure?',
-        text: 'Once deleted, you will not be able to recover this imaginary file!',
-        icon: 'warning',
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this imaginary file!",
+        icon: "warning",
         buttons: true,
         dangerMode: true,
-    })
-    .then((willDelete) => {
+    }).then((willDelete) => {
         if (willDelete) {
-            Service.showLoading()
-            axios.delete(`/penerimaan-barang/${id}`)
-            .then((result) => {
-                if (result.status === 200 || result.status === 201) {
-                    $('#modal-penerimaan-barang').modal('hide')
-                    swal('Berhasil!', 'BAPB berhasil ditambah!', 'success')
-                    
-                    initializeDatatable()
-                }
-            })
-            .catch((err) => Service.handelErrorFetch(err))
-            .finally(() => Service.hideLoading())
-            
+            Service.showLoading();
+            axios
+                .delete(`/penerimaan-barang/${id}`)
+                .then((result) => {
+                    if (result.status === 200 || result.status === 201) {
+                        $("#modal-penerimaan-barang").modal("hide");
+                        swal("Berhasil!", "BAPB berhasil ditambah!", "success");
+
+                        initializeDatatable();
+                    }
+                })
+                .catch((err) => Service.handelErrorFetch(err))
+                .finally(() => Service.hideLoading());
         } else {
-            swal('Your imaginary file is safe!');
+            swal("Your imaginary file is safe!");
         }
-    })
+    });
 }

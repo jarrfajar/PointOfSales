@@ -44,6 +44,7 @@ class PenerimaanBarangService
                 'sub_total'         => $request->sub_total,
                 'diskon'            => $request->diskon,
                 'ppn'               => $request->ppn,
+                'status'            => 0,
             ]);
     
             $data = [];
@@ -58,13 +59,8 @@ class PenerimaanBarangService
                     'diskon_rp'            => $value['diskon_rp'],
                     'ppn'                  => $value['ppn'],
                     'total_harga'          => $value['total_harga'],
+                    'status'               => 0,
                 ];
-
-                // update stock barang
-                $stock_barang          = StockBarang::where('kode_cabang', auth()->user()->kode_cabang)->where('barang_id', $value['barang_id'])->first();
-                $stock_barang->masuk  += $value['jumlah'];
-                $stock_barang->jumlah += $value['jumlah'];
-                $stock_barang->update();
             }
             
             DetailPenerimaanBarang::insert($data);
@@ -82,7 +78,7 @@ class PenerimaanBarangService
 
     public static function show(int $id)
     {
-        $penerimaan_barang = HeaderPenerimaanBarang::with('purchaseOrder','supplier','gudang','barangs')->find($id);
+        $penerimaan_barang = HeaderPenerimaanBarang::with('purchaseOrder','supplier','gudang','barangs.barang','barangs.satuan')->find($id);
 
         return response()->json(['data' => $penerimaan_barang]);
     }
@@ -109,16 +105,13 @@ class PenerimaanBarangService
                 'sub_total'         => $request->sub_total,
                 'diskon'            => $request->diskon,
                 'ppn'               => $request->ppn,
+                'status'            => 0,
             ]);
-
-            $jumlah_old = $header_penerimaan_barang->barangs->pluck('jumlah');
 
             $header_penerimaan_barang->barangs()->delete();
     
             $data = [];
             foreach ($request->barang as $key => $value) {
-                $selisih = $jumlah_old[$key] - $value['jumlah'];
-
                 $data[] = [
                     'penerimaan_barang_id' => $header_penerimaan_barang->id,
                     'barang_id'            => $value['barang_id'],
@@ -129,13 +122,8 @@ class PenerimaanBarangService
                     'diskon_rp'            => $value['diskon_rp'],
                     'ppn'                  => $value['ppn'],
                     'total_harga'          => $value['total_harga'],
+                    'status'               => 0,
                 ];
-
-                // update stock barang
-                $stock_barang          = StockBarang::where('kode_cabang', auth()->user()->kode_cabang)->where('barang_id', $value['barang_id'])->first();
-                $stock_barang->masuk  -= $selisih;
-                $stock_barang->jumlah -= $selisih;
-                $stock_barang->update();
             }
             
             DetailPenerimaanBarang::insert($data);
@@ -175,5 +163,19 @@ class PenerimaanBarangService
             DB::rollback();
             return response()->json(['error' => $th->getMessage()], 500);
         }
+    }
+
+    public static function search(object $request, int $supplier_id)
+    {
+        $penerimaan_barang = HeaderPenerimaanBarang::when($request->search, function($query) use ($request) {
+                                return $query->where('nomor_bapb', 'LIKE', "%$request->search%");
+                            })
+                            ->where('supplier_id', $supplier_id)
+                            ->orderBy('id', 'desc')
+                            ->limit(10)
+                            ->get();
+                          
+        
+        return response()->json(['data' => $penerimaan_barang]);
     }
 }

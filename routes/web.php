@@ -11,6 +11,8 @@ use App\Http\Controllers\ReturPenerimaanBarangController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\StokBarangController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\VerifikasiPenerimaanBarang;
+use App\Models\Barang;
 use App\Models\HeaderPenerimaanBarang;
 use App\Models\StockBarang;
 use App\Services\SerialNumberService;
@@ -47,7 +49,7 @@ Route::get('/dashboard-general-dashboard', function () {
 });
 
 Route::get('/test', function () {
-    $penerimaan_barang = HeaderPenerimaanBarang::with('barangs')->find(1);
+    $penerimaan_barang = Barang::first();
 
     return response()->json(['data' => $penerimaan_barang]);
 });
@@ -108,6 +110,10 @@ Route::get('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'show'
 Route::post('/penerimaan-barang', [PenerimaanBarangController::class, 'store']);
 Route::put('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'update']);
 Route::delete('/penerimaan-barang/{id}', [PenerimaanBarangController::class, 'destroy']);
+Route::get('/penerimaan-barang-search/{supplier_id}', [PenerimaanBarangController::class, 'search']);
+
+Route::get('/verifikasi-penerimaan-barang', [VerifikasiPenerimaanBarang::class, 'index']);
+Route::put('/verifikasi-penerimaan-barang/{nomor_bapb}', [VerifikasiPenerimaanBarang::class, 'verifikasi']);
 
 Route::get('/retur-penerimaan-barang', [ReturPenerimaanBarangController::class, 'index']);
 Route::get('/retur-penerimaan-barang/{id}', [ReturPenerimaanBarangController::class, 'show']);

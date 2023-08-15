@@ -47,6 +47,7 @@
                                         <th>Terima</th>
                                         <th>Jatuh Tempo</th>
                                         <th style="width: 15%">Total harga</th>
+                                        <th style="width: 10%">Status</th>
                                         <th style="width: 10%">Aksi</th>
                                     </tr>
                                 </thead>
@@ -70,7 +71,7 @@
         
         <div class="row">
             <x-input-select-col name="supplier_id" label="Supplier" style="width: 100%;" onchange="getPurchaseOrder(this.value)"></x-input-select-col>
-            <x-input-select-col name="purchase_order_id" label="Nomor PO" style="width: 100%;"></x-input-select-col>
+            <x-input-select-col name="purchase_order_id" onchange="changePurchaseOrder(this.value)" label="Nomor PO" style="width: 100%;"></x-input-select-col>
         </div>
 
         <div class="row">
@@ -104,7 +105,7 @@
             <tbody></tbody>
         </table>
         
-        <button type="button" class="btn btn-primary" onclick="addRow()"><i class="fa fa-plus"></i></button> 
+        <button type="button" class="btn btn-primary btn-addRow" onclick="addRow()"><i class="fa fa-plus"></i></button> 
 
         <div class="row mt-4 px-3" style="gap: 20px">
             <x-input-row type="text" name="sub_total" label="Sub Total" readonly></x-input-row>
@@ -122,7 +123,7 @@
     <script src={{ asset('library/datatables/Select-1.2.4/js/dataTables.select.min.js') }}></script>
     <script src="{{ asset('library/select2/dist/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('library/sweetalert/dist/sweetalert.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{ asset('library/axios/dist/axios.min.js') }}"></script>
     
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/service/service.js') }}"></script>

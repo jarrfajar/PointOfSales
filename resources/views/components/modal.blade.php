@@ -13,7 +13,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="btn-form-{{ $name }}">Save</button>
-                    <button type="button" class="btn btn-warning" onclick="formReset()">Reset</button>
+                    <button type="button" class="btn btn-warning" id="reset-form-modal" onclick="formReset()">Reset</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="dismis-modal">Close</button>
                 </div>
             </form>

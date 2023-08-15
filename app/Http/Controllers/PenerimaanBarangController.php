@@ -32,4 +32,9 @@ class PenerimaanBarangController extends Controller
     {
         return PenerimaanBarangService::delete($id);
     }
+
+    public function search(Request $request, int $supplier_id)
+    {
+        return PenerimaanBarangService::search($request, $supplier_id);
+    }
 }

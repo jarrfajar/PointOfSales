@@ -25,6 +25,16 @@ class DetailPenerimaanBarang extends Model
     }
 
     /**
+     * Get the satuan associated with the DetailPenerimaanBarang
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function satuan(): HasOne
+    {
+        return $this->hasOne(Satuan::class, 'id', 'satuan_id');
+    }
+
+    /**
      * Get the penerimaanBarang that owns the DetailPenerimaanBarang
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
