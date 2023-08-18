@@ -37,4 +37,9 @@ class PenerimaanBarangController extends Controller
     {
         return PenerimaanBarangService::search($request, $supplier_id);
     }
+
+    public function showbarangRetur(int $supplier_id)
+    {
+        return PenerimaanBarangService::showbarangRetur($supplier_id);
+    }
 }

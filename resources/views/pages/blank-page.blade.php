@@ -30,18 +30,18 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped" id="table-cabang">
-                            <thead >
-                                <tr>
-                                    <th style="width: 50px">ID</th>
-                                    <th>Nama</th>
-                                    <th>Alamat</th>
-                                    <th>Kepala Cabang</th>
-                                    <th style="width: 100px">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="table-cabang">
+                                <thead >
+                                    <tr>
+                                        <th style="width: 50px">ID</th>
+                                        <th>COlumn</th>
+                                        <th style="width: 100px">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="card-footer bg-whitesmoke">
                         This is card footer

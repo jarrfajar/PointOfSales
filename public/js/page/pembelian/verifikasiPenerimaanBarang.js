@@ -1,5 +1,6 @@
 let unitROw = 1
 $(document).ready(function () {
+    $('#reset-form-modal').hide()
     getIndex()
 })
 
@@ -28,11 +29,11 @@ function drawTable(data) {
             },
             {
                 data: "gudang",
-                render: (data) => data.nama
+                render: (data) => data?.nama
             },
             {
                 data: "supplier",
-                render: (data) => data.nama
+                render: (data) => data?.nama
             },
             {
                 data: "tanggal_terima",
@@ -50,10 +51,9 @@ function drawTable(data) {
                 data: "id",
                 render: function (data) {
                     return /*html*/ `
-                        <div style="display: flex; justify-content: center; gap: 10px;">
-                            <button type="submit" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showModal(${data})"><i class="fas fa-pencil-alt"></i></button>
-                            <button type="submit" class="btn btn-danger btn-sm btn-action mr-1" data-toggle="tooltip" title="Checkout" onclick="deleteBapb(${data})"><i class="fas fa-trash-alt"></i></button>
-                        </div>`
+                        <button type="submit" class="btn btn-primary btn-sm btn-action mr-1"data-toggle="tooltip" title="Edit" onclick="showModal(${data})">
+                            <i class="fa-regular fa-eye fa-xl"></i>
+                        </button>`
                 },
             },
         ],

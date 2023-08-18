@@ -165,17 +165,26 @@ class PenerimaanBarangService
         }
     }
 
+    /**
+     * Get penerimaan barang for retur
+     */
     public static function search(object $request, int $supplier_id)
     {
-        $penerimaan_barang = HeaderPenerimaanBarang::when($request->search, function($query) use ($request) {
-                                return $query->where('nomor_bapb', 'LIKE', "%$request->search%");
-                            })
+        $penerimaan_barang = HeaderPenerimaanBarang::select('id', 'nomor_bapb')
                             ->where('supplier_id', $supplier_id)
+                            ->where('status', 2)
                             ->orderBy('id', 'desc')
                             ->limit(10)
                             ->get();
                           
         
+        return response()->json(['data' => $penerimaan_barang]);
+    }
+
+    public static function showbarangRetur(int $id)
+    {
+        $penerimaan_barang = HeaderPenerimaanBarang::with(['barangs' => fn($query) => $query->where('status', 2), 'supplier','gudang','barangs.barang','barangs.satuan'])->find($id);
+
         return response()->json(['data' => $penerimaan_barang]);
     }
 }

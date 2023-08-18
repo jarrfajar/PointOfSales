@@ -7,7 +7,7 @@ class Service {
      * @param {function|null} options.params - Fungsi opsional untuk mengkonfigurasi data yang akan dikirim dalam permintaan Ajax.
      */
     static initSelect2(options) {
-        const { id, uri, item, params = null } = options;
+        const { id, uri, item, placeholder = null, params = null } = options;
 
         const param = function (data) {
             return {
@@ -16,7 +16,7 @@ class Service {
         }
         
         $(`#${id}`).select2({
-            placeholder: "--Pilih--",
+            placeholder: placeholder || "--Pilih--",
             allowClear: true,
             ajax: {
                 url: `/${uri}`,
@@ -112,4 +112,14 @@ class Service {
             $(`#${resetTable} tbody`).empty();
         }
     }
+
+   static parseCurrency(price) {
+        return parseFloat(price).toLocaleString('id-ID')
+    }
+
+    static parseCurrencyToFloat(currency) {
+        const numberString = currency.replace(/\./g, '');
+        return parseFloat(numberString.replace(',', '.'));
+    }
+    
 }

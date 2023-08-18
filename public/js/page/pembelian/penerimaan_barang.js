@@ -81,8 +81,8 @@ function drawTable(data) {
     });
 }
 
-function showModal(id = null, saveAndReset = true) {
-    console.log(`modal ${saveAndReset}`);
+function showModal(id = null, showSaveAndReset = true) {
+    console.log(`modal ${showSaveAndReset}`);
     $("#modal-penerimaan-barang").modal({
         backdrop: "static",
         keyboard: false,
@@ -109,10 +109,10 @@ function showModal(id = null, saveAndReset = true) {
         $("#modal-title").text("Ubah BAPB");
         $("#btn-form-penerimaan-barang").attr("onclick", `update(${id})`);
         $("#btn-form-penerimaan-barang").text("Ubah");
-        showPenerimaanBarang(id, saveAndReset);
+        showPenerimaanBarang(id, showSaveAndReset);
     }
 
-    if (saveAndReset) {
+    if (showSaveAndReset) {
         $('#btn-form-penerimaan-barang').show()
         $('#reset-form-modal').show()
     } else {
@@ -150,7 +150,6 @@ function getPurchaseOrder(id) {
 
 function changePurchaseOrder(id) {
     showPurchaseOrder(id)
-    console.log('jalan');
     
     unitRow = 1;
     $("#table-barang tbody tr").each((key, row) => $(row).remove())
@@ -190,8 +189,7 @@ function showPurchaseOrder(id) {
         .finally(() => Service.hideLoading());
 }
 
-function addRow(value = null, saveAndReset = true) {
-    console.log(`addRow ${saveAndReset}`);
+function addRow(value = null, showSaveAndReset = true) {
     let gudang = $("#gudang_id").val();
 
     if (gudang == null) {
@@ -259,7 +257,7 @@ function addRow(value = null, saveAndReset = true) {
         $(`#tax-${unitRow}`).prop('checked', true).trigger('change')
     }
 
-    if (saveAndReset) {
+    if (showSaveAndReset) {
         $('input, select, textarea, .btn-deleteRow, .btn-addRow').prop("disabled", false)
     } else {
         $('input, select, textarea, .btn-deleteRow, .btn-addRow').prop("disabled", true)
@@ -352,13 +350,12 @@ function countTotalPrice(element) {
 }
 
 function countDiskonPersen(element) {
-    let elementId = $(element).attr("id").split("-")[1];
+    let elementId          = $(element).attr("id").split("-")[1];
     let total_harga_hidden = $(`#total_harga_hidden-${elementId}`).val();
-    let diskon_persen = $(`#diskon_persen-${elementId}`).val();
+    let diskon_persen      = $(`#diskon_persen-${elementId}`).val();
 
     if (diskon_persen > 0) {
-        let diskon_harga =
-            total_harga_hidden * (diskon_persen / 100).toFixed(2);
+        let diskon_harga = total_harga_hidden * (diskon_persen / 100).toFixed(2);
 
         $(`#diskon_rp-${elementId}`).val(diskon_harga);
         $(`#total_harga-${elementId}`).val(total_harga_hidden - diskon_harga);
@@ -414,15 +411,11 @@ function countTax(element) {
 
 function countDiskonWithTax() {
     let diskon = 0;
-    let tax = 0;
+    let tax    = 0;
 
     $("#table-barang tbody tr").each(function () {
-        diskon += parseFloat(
-            $(this).children().find('[data-name="diskon_rp"]').val(),
-        );
-        tax += parseFloat(
-            $(this).children().find('[data-name="tax_hidden"]').val(),
-        );
+        diskon += parseFloat($(this).children().find('[data-name="diskon_rp"]').val())
+        tax    += parseFloat($(this).children().find('[data-name="tax_hidden"]').val())
     });
 
     $("#diskon").val(diskon);
@@ -432,8 +425,8 @@ function countDiskonWithTax() {
 
 function countTotal() {
     let sub_total = parseFloat($("#sub_total").val());
-    let diskon = parseFloat($("#diskon").val());
-    let ppn = parseFloat($("#ppn").val());
+    let diskon    = parseFloat($("#diskon").val());
+    let ppn       = parseFloat($("#ppn").val());
 
     $("#total_harga").val(sub_total - diskon + ppn);
 }
@@ -495,8 +488,8 @@ function store() {
         .finally(() => Service.hideLoading());
 }
 
-function showPenerimaanBarang(id, saveAndReset = true) {
-    console.log(`showPenerimaanBarang ${saveAndReset}`);
+function showPenerimaanBarang(id, showSaveAndReset = true) {
+    console.log(`showPenerimaanBarang ${showSaveAndReset}`);
     Service.showLoading();
     axios
         .get(`/penerimaan-barang/${id}`)
@@ -532,7 +525,7 @@ function showPenerimaanBarang(id, saveAndReset = true) {
                 $(`textarea#${key}`).val(value)
             })
 
-            response.barangs.forEach(value => addRow(value, saveAndReset))
+            response.barangs.forEach(value => addRow(value, showSaveAndReset))
         })
         .catch((err) => Service.handelErrorFetch(err, "table-barang"))
         .finally(() => Service.hideLoading());

@@ -28,11 +28,10 @@ class VerfikasiPenerimaanBarangService
         DB::beginTransaction();
         try {
             $penerimaan_barang = HeaderPenerimaanBarang::where('nomor_bapb', $nomor_bapb)->first();
-            $penerimaan_barang->update(['status' => 1]);
             
             $valid_barang_ids = [];
             $retur_barang_ids = [];
-
+            
             foreach ($request->barangs as $value) {
                 if ($value['status'] == 1) {
                     array_push($valid_barang_ids, $value['barang_id']);
@@ -42,8 +41,12 @@ class VerfikasiPenerimaanBarangService
                 }
             }
 
+            // jika ada $retur_barang_ids maka di bapb tersebut ada barang yang di retur 
+            $penerimaan_barang->update(['status' => isset($retur_barang_ids) ? 2 : 1]);
+
+            // valid = 1, retur = 2
             self::validOrReturItem($penerimaan_barang->id, $valid_barang_ids, 1);
-            self::validOrReturItem($penerimaan_barang->id, $retur_barang_ids, 0);
+            self::validOrReturItem($penerimaan_barang->id, $retur_barang_ids, 2);
     
             DB::commit();
         

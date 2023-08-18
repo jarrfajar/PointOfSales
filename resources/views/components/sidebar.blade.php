@@ -61,8 +61,8 @@
                     <li class="{{ Request::is('verifikasi-penerimaan-barang') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('verifikasi-penerimaan-barang') }}">Verifikasi BAPB</a>
                     </li>
-                    <li class="{{ Request::is('return-bapb') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('return-bapb') }}">Return BAPB</a>
+                    <li class="{{ Request::is('retur-penerimaan-barang') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('retur-penerimaan-barang') }}">Return BAPB</a>
                     </li>
                 </ul>
             </li>

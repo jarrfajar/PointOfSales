@@ -24,6 +24,7 @@ class StokBarangService
     {
         $penerimaan_barang = DetailPenerimaanBarang::with('penerimaanBarang.supplier','penerimaanBarang.gudang','penerimaanBarang.purchaseOrder','barang.kategori','barang.satuan')
                                                     ->whereRelation('penerimaanBarang','kode_cabang', auth()->user()->kode_cabang)
+                                                    ->where('status', 1)
                                                     ->orderBy('id', 'desc');
 
         if (request()->wantsJson()) {
