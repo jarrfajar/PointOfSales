@@ -6,7 +6,7 @@ use Yajra\DataTables\DataTables;
 
 class MembersService
 {
-    public static function index() 
+    public static function index()
     {
         $members = Members::orderBy('id', 'desc');
 

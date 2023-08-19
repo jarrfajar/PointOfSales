@@ -11,4 +11,9 @@ class KasirController extends Controller
     {
         return KasirService::index();
     }
+
+    public function store(Request $request)
+    {
+        return KasirService::store($request);
+    }
 }

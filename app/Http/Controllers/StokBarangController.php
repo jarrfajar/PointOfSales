@@ -12,6 +12,11 @@ class StokBarangController extends Controller
         return StokBarangService::index();
     }
 
+    public function stockSearch(Request $request)
+    {
+        return StokBarangService::stockSearch($request);
+    }
+
     public function masuk()
     {
         return StokBarangService::masuk();

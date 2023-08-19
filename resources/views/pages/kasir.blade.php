@@ -28,18 +28,19 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="d-flex justify-content-between">
+                                <h1>Total Harga</h1>
+                                <input type="hidden" id="total_harga" value="0">
+                                <h1 id="total_harga_text">0</h1>
+                            </div>
+                            <div class="mt-3 d-flex justify-content-between">
                                 <label class="custom-switch p-0">
+                                <input type="hidden" id="jumlah_points">
+                                <input type="hidden" id="points">
                                     <input type="checkbox" id="checkbox-point" name="custom-switch-checkbox" class="custom-switch-input">
                                     <span class="custom-switch-indicator"></span>
                                     <span class="custom-switch-description"><span id="jumlah-point" class="fw-bold mr-2"></span>Gunakan Point</span>
                                 </label>
                                 <input type="text" id="nama-member" class="form-control col-md-6 text-right" value="-" readonly>
-                            </div>
-
-                            <div class="mt-3 d-flex justify-content-between">
-                                <h1>Total Harga</h1>
-                                <input type="hidden" id="total_harga" value="0">
-                                <h1 id="total_harga_text">0</h1>
                             </div>
                         </div>
                     </div>
@@ -48,22 +49,29 @@
 
             <div class="section-body">
                 <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-stripped" id="table-barang">
-                                <thead>
-                                    <th>Aksi</th>
-                                    <th>Nama Barang</th>
-                                    <th style="width: 10%">Qty</th>
-                                    <th style="width: 10%">Satuan</th>
-                                    <th>Harga</th>
-                                    <th style="width: 10%">Dikson(%)</th>
-                                    <th>Sub Total</th>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                    <form id="form-kasir">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-stripped" id="table-barang">
+                                    <caption>List Barang</caption>
+                                    <thead>
+                                        <th>Aksi</th>
+                                        <th>Nama Barang</th>
+                                        <th style="width: 10%">Qty</th>
+                                        <th style="width: 10%">Satuan</th>
+                                        <th>Harga</th>
+                                        <th style="width: 10%">Dikson(%)</th>
+                                        <th>Sub Total</th>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                        <div class="card-footer text-right">
+                            <button type="button" class="btn btn-primary mr-2" id="btn-form-barang" onclick="bayar()">Bayar</button>
+                            <button type="button" class="btn btn-warning" id="reset-form-modal" onclick="formReset()">Reset</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>

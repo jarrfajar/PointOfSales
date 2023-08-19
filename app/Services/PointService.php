@@ -11,17 +11,17 @@ class PointService
         return floor($price / 200);
     }
     
-    public static function increasePoint(float $price, string $phone)
+    public static function increasePoint(float $price, int $memberId)
     {
-        $member = Members::where('nomor_telpon', $phone)->first();
-        $member->poin += self::priceToPoint($price);
+        $member = Members::find($memberId);
+        $member->point += self::priceToPoint($price);
         $member->update();
     }
 
-    public static function decreasePoint(int $point, string $phone)
+    public static function decreasePoint(int $point, int $memberId)
     {
-        $member = Members::where('nomor_telpon', $phone)->first(); 
-        $member->poin -= $point;
+        $member = Members::find($memberId);
+        $member->point -= $point;
         $member->update();
     }
 }

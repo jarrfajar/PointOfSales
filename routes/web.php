@@ -122,9 +122,11 @@ Route::middleware('auth')->group(function () {
 
     /**----------------------------------Kasir----------------------------------- */
     Route::get('/kasir', [KasirController::class, 'index']);
+    Route::post('/kasir', [KasirController::class, 'store']);
 
     /**----------------------------------STOK BARANG----------------------------------- */
     Route::get('/stok-barang', [StokBarangController::class, 'index']);
+    Route::get('/stok-barang/search', [StokBarangController::class, 'stockSearch']);
     Route::get('/barang-masuk', [StokBarangController::class, 'masuk']);
     Route::get('/barang-keluar', [StokBarangController::class, 'keluar']);
     Route::get('/barang-retur', [StokBarangController::class, 'retur']);

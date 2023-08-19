@@ -440,7 +440,7 @@ function jsonData() {
             $(this).find(`#tax-${elementId}`).val(0);
         }
 
-        var obj = {
+        let obj = {
             barang_id: $(this).find("select").val(),
             jumlah: $(this).find(`#jumlah-${elementId}`).val(),
             satuan_id: $(this).find(`#satuan-${elementId}`).val(),
@@ -512,12 +512,12 @@ function showPenerimaanBarang(id, showSaveAndReset = true) {
                 },
             })
 
-            var optionData = {
+            let optionData = {
                 id: response.purchase_order.id,
                 text: `${response.purchase_order.nomor_purchase_order} | ${moment(response.purchase_order.tanggal).format("YYYY-MM-DD")}`,
             }
         
-            var newOption = new Option(optionData.text, optionData.id)
+            let newOption = new Option(optionData.text, optionData.id)
             $('#purchase_order_id').empty().append(newOption)
             
             $.each(response, function(key,value) {

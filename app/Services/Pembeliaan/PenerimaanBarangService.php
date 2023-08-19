@@ -13,12 +13,12 @@ class PenerimaanBarangService
 {
     public static function index()
     {
-        $penerimaan_barang = HeaderPenerimaanBarang::with('supplier','gudang')
+        $penerimaanBarang = HeaderPenerimaanBarang::with('supplier','gudang')
                                                ->where('kode_cabang', auth()->user()->kode_cabang)
                                                ->orderBy('id', 'desc');
 
         if (request()->wantsJson()) {
-            return DataTables::of($penerimaan_barang)->addIndexColumn()->make(true);
+            return DataTables::of($penerimaanBarang)->addIndexColumn()->make(true);
         }
 
         return view('pages.pembelian.penerimaanBarang',['type_menu' => 'pembelian']);
@@ -28,7 +28,7 @@ class PenerimaanBarangService
     {
         DB::beginTransaction();
         try {
-            $header_penerimaan_barang = HeaderPenerimaanBarang::create([
+            $headerPenerimaanBarang = HeaderPenerimaanBarang::create([
                 'kode_cabang'       => auth()->user()->kode_cabang,
                 'nomor_bapb'        => SerialNumberService::genereteNumber('FJR', 'BAPB'),
                 'nomor_faktur'      => SerialNumberService::genereteNumber('FJR', 'FKTR'),
@@ -50,7 +50,7 @@ class PenerimaanBarangService
             $data = [];
             foreach ($request->barang as $value) {
                 $data[] = [
-                    'penerimaan_barang_id' => $header_penerimaan_barang->id,
+                    'penerimaanBarang_id' => $headerPenerimaanBarang->id,
                     'barang_id'            => $value['barang_id'],
                     'jumlah'               => $value['jumlah'],
                     'satuan_id'            => $value['satuan_id'],
@@ -69,7 +69,7 @@ class PenerimaanBarangService
 
             DB::commit();
         
-            return response()->json(['data' => $header_penerimaan_barang]);
+            return response()->json(['data' => $headerPenerimaanBarang]);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['error' => $th->getMessage()], 500);
@@ -78,18 +78,18 @@ class PenerimaanBarangService
 
     public static function show(int $id)
     {
-        $penerimaan_barang = HeaderPenerimaanBarang::with('purchaseOrder','supplier','gudang','barangs.barang','barangs.satuan')->find($id);
+        $penerimaanBarang = HeaderPenerimaanBarang::with('purchaseOrder','supplier','gudang','barangs.barang','barangs.satuan')->find($id);
 
-        return response()->json(['data' => $penerimaan_barang]);
+        return response()->json(['data' => $penerimaanBarang]);
     }
 
     public static function update(object $request, int $id)
     {
         DB::beginTransaction();
         try {
-            $header_penerimaan_barang = HeaderPenerimaanBarang::with('barangs')->find($id);
+            $header_penerimaanBarang = HeaderPenerimaanBarang::with('barangs')->find($id);
 
-            $header_penerimaan_barang->update([
+            $header_penerimaanBarang->update([
                 'kode_cabang'       => auth()->user()->kode_cabang,
                 'nomor_bapb'        => $request->nomor_bapb,
                 'nomor_faktur'      => $request->nomor_faktur,
@@ -108,12 +108,12 @@ class PenerimaanBarangService
                 'status'            => 0,
             ]);
 
-            $header_penerimaan_barang->barangs()->delete();
+            $header_penerimaanBarang->barangs()->delete();
     
             $data = [];
-            foreach ($request->barang as $key => $value) {
+            foreach ($request->barang as $value) {
                 $data[] = [
-                    'penerimaan_barang_id' => $header_penerimaan_barang->id,
+                    'penerimaanBarang_id' => $header_penerimaanBarang->id,
                     'barang_id'            => $value['barang_id'],
                     'jumlah'               => $value['jumlah'],
                     'satuan_id'            => $value['satuan_id'],
@@ -132,7 +132,7 @@ class PenerimaanBarangService
 
             DB::commit();
         
-            return response()->json(['data' => $header_penerimaan_barang]);
+            return response()->json(['data' => $header_penerimaanBarang]);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['error' => $th->getMessage()], 500);
@@ -143,9 +143,9 @@ class PenerimaanBarangService
     {
         DB::beginTransaction();
         try {
-            $penerimaan_barang = HeaderPenerimaanBarang::with('barangs')->find($id);
+            $penerimaanBarang = HeaderPenerimaanBarang::with('barangs')->find($id);
 
-            $penerimaan_barang->barangs->map(function($item, $key){
+            $penerimaanBarang->barangs->map(function($item){
                 $stock = StockBarang::where('barang_id', $item['barang_id'])->first();
                 $stock->update([
                     'masuk'  => $stock->masuk - $item['jumlah'],
@@ -153,12 +153,12 @@ class PenerimaanBarangService
                 ]);
             });
 
-            $penerimaan_barang->barangs()->delete();
-            $penerimaan_barang->delete();
+            $penerimaanBarang->barangs()->delete();
+            $penerimaanBarang->delete();
     
             DB::commit();
         
-            return response()->json(['data' => $penerimaan_barang]);
+            return response()->json(['data' => $penerimaanBarang]);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json(['error' => $th->getMessage()], 500);
@@ -170,7 +170,7 @@ class PenerimaanBarangService
      */
     public static function search(object $request, int $supplier_id)
     {
-        $penerimaan_barang = HeaderPenerimaanBarang::select('id', 'nomor_bapb')
+        $penerimaanBarang = HeaderPenerimaanBarang::select('id', 'nomor_bapb')
                             ->where('supplier_id', $supplier_id)
                             ->where('status', 2)
                             ->orderBy('id', 'desc')
@@ -178,13 +178,13 @@ class PenerimaanBarangService
                             ->get();
                           
         
-        return response()->json(['data' => $penerimaan_barang]);
+        return response()->json(['data' => $penerimaanBarang]);
     }
 
     public static function showbarangRetur(int $id)
     {
-        $penerimaan_barang = HeaderPenerimaanBarang::with(['barangs' => fn($query) => $query->where('status', 2), 'supplier','gudang','barangs.barang','barangs.satuan'])->find($id);
+        $penerimaanBarang = HeaderPenerimaanBarang::with(['barangs' => fn($query) => $query->where('status', 2), 'supplier','gudang','barangs.barang','barangs.satuan'])->find($id);
 
-        return response()->json(['data' => $penerimaan_barang]);
+        return response()->json(['data' => $penerimaanBarang]);
     }
 }

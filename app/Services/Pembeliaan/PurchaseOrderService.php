@@ -11,10 +11,10 @@ class PurchaseOrderService
 {
     public static function index()
     {
-        $purchase_order = HeaderPurchaseOrder::with('supplier','gudang','purchaseOrders')->where('kode_cabang', auth()->user()->kode_cabang)->orderBy('id', 'desc');
+        $purchaseOrder = HeaderPurchaseOrder::with('supplier','gudang','purchaseOrders')->where('kode_cabang', auth()->user()->kode_cabang)->orderBy('id', 'desc');
 
         if (request()->ajax()) {
-            return DataTables::of($purchase_order)->addIndexColumn()->make(true);
+            return DataTables::of($purchaseOrder)->addIndexColumn()->make(true);
         }
 
         return view('pages.pembelian.purchaseOrder',['type_menu' => 'pembelian']);
@@ -24,7 +24,7 @@ class PurchaseOrderService
     {
         DB::beginTransaction();
         try {
-            $purchase_order = HeaderPurchaseOrder::create([
+            $purchaseOrder = HeaderPurchaseOrder::create([
                 'kode_cabang'          => auth()->user()->kode_cabang,
                 'nomor_purchase_order' => SerialNumberService::genereteNumber(auth()->user()->kode_cabang, 'PO'),
                 'gudang_id'            => $request->gudang_id,
@@ -39,7 +39,7 @@ class PurchaseOrderService
             $data = [];
             foreach ($request->barang as $value) {
                 $data[] = [
-                    'hpurchase_order_id' => $purchase_order->id,
+                    'hpurchase_order_id' => $purchaseOrder->id,
                     'barang_id'          => $value['barang_id'],
                     'jumlah'             => $value['jumlah'],
                     'satuan_id'          => $value['satuan_id'],
@@ -63,10 +63,10 @@ class PurchaseOrderService
     {
         DB::beginTransaction();
         try {
-            $purchase_order = HeaderPurchaseOrder::find($id);
-            $purchase_order->purchaseOrders()->delete();
+            $purchaseOrder = HeaderPurchaseOrder::find($id);
+            $purchaseOrder->purchaseOrders()->delete();
 
-            $purchase_order->update([
+            $purchaseOrder->update([
                 'gudang_id'   => $request->gudang_id,
                 'tanggal'     => $request->tanggal,
                 'supplier_id' => $request->supplier_id,
@@ -79,7 +79,7 @@ class PurchaseOrderService
             $data = [];
             foreach ($request->barang as $value) {
                 $data[] = [
-                    'hpurchase_order_id' => $purchase_order->id,
+                    'hpurchase_order_id' => $purchaseOrder->id,
                     'barang_id'          => $value['barang_id'],
                     'jumlah'             => $value['jumlah'],
                     'satuan_id'          => $value['satuan_id'],
@@ -103,10 +103,10 @@ class PurchaseOrderService
     {
         DB::beginTransaction();
         try {
-            $purchase_order = HeaderPurchaseOrder::find($id);
-            $purchase_order->purchaseOrders()->delete();
+            $purchaseOrder = HeaderPurchaseOrder::find($id);
+            $purchaseOrder->purchaseOrders()->delete();
 
-            $purchase_order->delete();
+            $purchaseOrder->delete();
     
             DB::commit();
         
@@ -119,14 +119,14 @@ class PurchaseOrderService
 
     public static function show(int $id)
     {
-        $purchase_order = HeaderPurchaseOrder::with('supplier','gudang','purchaseOrders.satuan','purchaseOrders.barang')->where('kode_cabang', auth()->user()->kode_cabang)->find($id);
+        $purchaseOrder = HeaderPurchaseOrder::with('supplier','gudang','purchaseOrders.satuan','purchaseOrders.barang')->where('kode_cabang', auth()->user()->kode_cabang)->find($id);
 
-        return response()->json(['data' => $purchase_order]);
+        return response()->json(['data' => $purchaseOrder]);
     }
 
     public static function get(int $id)
     {
-        $purchase_order = HeaderPurchaseOrder::select('id','nomor_purchase_order','tanggal')
+        $purchaseOrder = HeaderPurchaseOrder::select('id','nomor_purchase_order','tanggal')
                                             ->where([
                                                 ['supplier_id', $id],
                                                 ['kode_cabang', auth()->user()->kode_cabang],
@@ -135,20 +135,20 @@ class PurchaseOrderService
                                             ])
                                             ->get();
 
-        return response()->json(['data' => $purchase_order]);
+        return response()->json(['data' => $purchaseOrder]);
     }
 
     public static function approve(int $id)
     {
-        $purchase_order = HeaderPurchaseOrder::find($id)->update(['status' => 1]);
+        $purchaseOrder = HeaderPurchaseOrder::find($id)->update(['status' => 1]);
         
-        return response()->json(['data' => $purchase_order]);
+        return response()->json(['data' => $purchaseOrder]);
     }
 
     public static function reject(int $id)
     {
-        $purchase_order = HeaderPurchaseOrder::find($id)->update(['status' => 2]);
+        $purchaseOrder = HeaderPurchaseOrder::find($id)->update(['status' => 2]);
 
-        return response()->json(['data' => $purchase_order]);
+        return response()->json(['data' => $purchaseOrder]);
     }
 }

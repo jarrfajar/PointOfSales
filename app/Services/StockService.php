@@ -5,32 +5,32 @@ use App\Models\StockBarang;
 
 class StockService
 {
-    public $barang_id;
+    public $barangId;
     public $jumlah;
-    public $stock_barang;
+    public $stockBarang;
 
-    public function __construct(int $barang_id, int $jumlah) {
-        $this->barang_id    = $barang_id;
-        $this->jumlah       = $jumlah;
-        $this->stock_barang = StockBarang::where('kode_cabang', auth()->user()->kode_cabang)->where('barang_id', $barang_id)->first();
+    public function __construct(int $barangId, int $jumlah) {
+        $this->barangId    = $barangId;
+        $this->jumlah      = $jumlah;
+        $this->stockBarang = StockBarang::where('kode_cabang', auth()->user()->kode_cabang)->where('barang_id', $barangId)->first();
     }
 
-    public static function init(int $barang_id, int $jumlah)
+    public static function init(int $barangId, int $jumlah)
     {
-        return new self($barang_id, $jumlah);
+        return new self($barangId, $jumlah);
     }
     
     public function increase()
     {
-        $this->stock_barang->masuk  += $this->jumlah;
-        $this->stock_barang->jumlah += $this->jumlah;
-        $this->stock_barang->update();
+        $this->stockBarang->masuk  += $this->jumlah;
+        $this->stockBarang->jumlah += $this->jumlah;
+        $this->stockBarang->update();
     }
 
     public function decrease()
     {
-        $this->stock_barang->masuk  -= $this->jumlah;
-        $this->stock_barang->jumlah -= $this->jumlah;
-        $this->stock_barang->update();
+        $this->stockBarang->masuk  -= $this->jumlah;
+        $this->stockBarang->jumlah -= $this->jumlah;
+        $this->stockBarang->update();
     }
 }
