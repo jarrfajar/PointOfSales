@@ -2,6 +2,7 @@
 
 namespace App\Services\StokBarang;
 use App\Models\DetailPenerimaanBarang;
+use App\Models\DetailPenjualan;
 use App\Models\StockBarang;
 use Yajra\DataTables\DataTables;
 
@@ -51,5 +52,22 @@ class StokBarangService
         }
 
         return view('pages.stokBarang.barangMasuk', ['type_menu' => 'stok-barang']);
+}
+
+    public static function keluar(object $request)
+    {
+        $keluar = DetailPenjualan::with('sale.gudang','barang.kategori','barang.satuan')
+                                ->whereRelation('sale','kode_cabang', auth()->user()->kode_cabang)
+                                ->when(isset($request->start), function($query) use ($request) {
+                                    return $query->whereRelation('sale', 'tanggal', '>=', $request->start.' 00:00:00')
+                                                 ->whereRelation('sale', 'tanggal', '<=', $request->end.' 23:59:59');
+                                })
+                                ->orderBy('id', 'desc');
+
+        if (request()->wantsJson()) {
+        return DataTables::of($keluar)->addIndexColumn()->make(true);
+        }
+
+        return view('pages.stokBarang.barangKeluar', ['type_menu' => 'stok-barang']);
     }
 }

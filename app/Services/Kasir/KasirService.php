@@ -24,9 +24,10 @@ class KasirService
                 'kode_cabang'  => auth()->user()->kode_cabang,
                 'invoice'      => SerialNumberService::createInvoice(),
                 'tanggal'      => date('Y-m-d H:i:s'),
+                'gudang_id'    => $request->gudang_id,
                 'kasir_id'     => auth()->user()->id,
                 'member_id'    => $request->member_id,
-                'point'        => isset($request->jumlah_point) > 0 ? 1 : 0,
+                'point'        => $request->usePoint,
                 'jumlah_point' => $request->jumlah_point,
                 'total_harga'  => $request->total_harga,
             ]);

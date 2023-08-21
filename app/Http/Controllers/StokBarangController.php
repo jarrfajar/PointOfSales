@@ -21,4 +21,9 @@ class StokBarangController extends Controller
     {
         return StokBarangService::masuk();
     }
+
+    public function keluar(Request $request)
+    {
+        return StokBarangService::keluar($request);
+    }
 }

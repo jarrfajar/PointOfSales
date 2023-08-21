@@ -11,6 +11,7 @@ function showModal(id = null) {
         backdrop: "static",
         keyboard: false,
     });
+    
     resetForm()
 
     let today = moment().format('YYYY-MM-DD')
